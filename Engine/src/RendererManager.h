@@ -3,17 +3,22 @@
 #include "ModelManager.h"
 #include "ShaderManager.h"
 #include "DisplayManager.h"
-
+#include "GuiManager.h"
+#include "Utils.h"
 
 class RendererManager {
 private:
 	ModelManager* modelsRef;
 	ShaderManager* shadersRef;
 	DisplayManager* displayRef;
+	GuiManager* guiRef;
 
 public:
-	RendererManager(ModelManager& models, ShaderManager& shader, DisplayManager& display) 
-		: modelsRef(&models), shadersRef(&shader), displayRef(&display) {}
+	game_state state;
+
+public:
+	RendererManager(ModelManager& models, ShaderManager& shader, DisplayManager& display, GuiManager& gui) 
+		: modelsRef(&models), shadersRef(&shader), displayRef(&display), guiRef(&gui), state(NK_GAME) {}
 
 	void render();
 

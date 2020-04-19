@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Utils.h"
+#include "CameraManager.h"
 
 class DisplayManager {
 protected:
@@ -16,8 +17,12 @@ protected:
 	float ASPECT_RATIO = (float)screenWidth / (float)screenHeight;
 
 	float FOV = 45.0f;
+	float FOVCorrection = 0.0f;
 	float NEAR_PLANE = 0.1f;
 	float FAR_PLANE = 100.0f;
+	display_mode MODE;
+
+	friend class RendererManager;
 
 public:
 	GLFWwindow* window;
@@ -28,7 +33,7 @@ public:
 	DisplayManager();
 	void config();
 	bool isOpen() const;
-	void processInputs();
+	void processInputs(CameraManager* cam, RendererManager* render);
 	void prepare() const;
 	void update() const;
 	void destroy() const;

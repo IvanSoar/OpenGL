@@ -6,7 +6,6 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <vector>
 #include <utility>
 
 RawModel ModelManager::loadModel(const std::string& filename)
@@ -53,7 +52,7 @@ RawModel ModelManager::loadModel(const std::string& filename)
 
 
 
-void ModelManager::add(const std::string& filename)
+void ModelManager::add(const std::string& filename, model_t type)
 {
 	RawModel* rModel = new RawModel(loadModel(filename));
 
@@ -78,13 +77,18 @@ void ModelManager::add(const std::string& filename)
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	Model* model = new Model(generateModelId(), filename, VAO, rModel->vertexCount, rModel->indexCount);
-	models.emplace(std::pair<std::string, Model*>(filename, model));
+	Model* model = new Model(generateModelId(), filename, type, VAO, rModel->vertexCount, rModel->indexCount);
+	models.emplace(std::pair<unsigned int, Model*>(model->getID(), model));
 }
 
-Model& ModelManager::getModel(const std::string& modelName)
+Model& ModelManager::getModel(unsigned int modelId)
 {
-	return *models[modelName];
+	return *models[modelId];
+}
+
+unsigned int ModelManager::getLast()
+{
+	return models.size();
 }
 
 unsigned int ModelManager::generateModelId()
@@ -139,4 +143,9 @@ void Model::setRotation(float dx, float dy, float dz)
 unsigned int Model::getVAO()
 {
 	return VAO;
+}
+
+unsigned int Model::getID()
+{
+	return modelId;
 }

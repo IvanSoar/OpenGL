@@ -4,6 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Utils.h"
+
 #include <map>
 #include <vector>
 #include <string>
@@ -25,6 +27,7 @@ public:
 
 class Model {
 private:
+	model_t type;
 	unsigned int modelId;
 	std::string ModelName;
 
@@ -38,10 +41,11 @@ protected:
 	glm::vec3 scaleFactor = glm::vec3(1.0f);
 
 	friend class RendererManager;
+	friend class GuiManager;
 
 public:
-	Model(unsigned int id, const std::string& name, unsigned int vao, unsigned int vertexCount, unsigned int indexCount)
-		: modelId(id), ModelName(name), VAO(vao), vertexCount(vertexCount), indexCount(indexCount) {}
+	Model(unsigned int id, const std::string& name, model_t type, unsigned int vao, unsigned int vertexCount, unsigned int indexCount)
+		: modelId(id), ModelName(name), VAO(vao), type(type), vertexCount(vertexCount), indexCount(indexCount) {}
 
 	void move(float dx, float dy, float dz);
 	void rotate(float dx, float dy, float dz);
@@ -51,6 +55,7 @@ public:
 	void setRotation(float dx, float dy, float dz);
 
 	unsigned int getVAO();
+	unsigned int getID();
 };
 
 class ModelManager {
@@ -59,13 +64,15 @@ private:
 	const std::string MODELS_EXT = ".model";
 
 protected:
-	std::map<std::string, Model*> models;
+	std::map<unsigned int, Model*> models;
 
 	friend class RendererManager;
+	friend class GuiManager;
 
 public:
-	void add(const std::string& filename);
-	Model& getModel(const std::string& modelName);
+	void add(const std::string& filename, model_t type = NK_NOTGUI);
+	Model& getModel(unsigned int modelId);
+	unsigned int getLast();
 
 private:
 	RawModel loadModel(const std::string& filename);

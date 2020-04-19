@@ -1,0 +1,11 @@
+tarefas
+
+masterizar o git / github
+treinar codigo em C++
+blender
+
+camera
+gui
+light
+aprimorar loader .obj
+loader de textura
