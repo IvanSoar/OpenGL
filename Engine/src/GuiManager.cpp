@@ -9,8 +9,8 @@
 
 
 glm::vec3 GuiManager::mainColor = glm::vec3(0.3f, 0.5f, 0.8f);
-unsigned int GuiManager::padding = 50;
 
+unsigned int GuiManager::padding = 50;
 
 guiElement::guiElement(gui_element_align elementAlign, unsigned int pad, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent)
 	: align(elementAlign), padding(pad), sizeX(sizeX), sizeY(sizeY), color(color), parent(parent) {}
