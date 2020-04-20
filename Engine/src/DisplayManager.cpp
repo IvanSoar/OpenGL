@@ -75,6 +75,7 @@ void DisplayManager::processInputs(CameraManager* camera, RendererManager* rende
 
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
 		MODE = NK_PERSPECTIVE;
+		camera->cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 		std::cout << "DISPLAY MODE CHANGED: " << "PERSPECTIVE" << std::endl;
 	}
 

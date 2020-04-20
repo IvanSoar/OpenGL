@@ -13,13 +13,11 @@ glm::vec3 GuiManager::mainColor = glm::vec3(0.3f, 0.5f, 0.8f);
 unsigned int GuiManager::padding = 50;
 
 
-
 guiElement::guiElement(gui_element_align elementAlign, unsigned int pad, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent = nullptr)
 	: align(elementAlign), padding(pad), sizeX(sizeX), sizeY(sizeY), color(color), parent(parent) {}
 
 guiElement::guiElement(unsigned int posX, unsigned int posY, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent = nullptr)
 	: posX(posX), posY(posY), sizeX(sizeX), sizeY(sizeY), color(color), parent(parent) {}
-
 
 
 void GuiManager::render()
@@ -101,36 +99,6 @@ void GuiManager::update(int width, int height) {
 	}
 }
 
-void GuiManager::createWindow(gui_element_align align, unsigned int elementWidth, unsigned int elementHeight, glm::vec3 color = mainColor)
-{
-	guiElement* element = new guiElement(align, padding, elementWidth, elementHeight, color);
-	guiElements.emplace_back(element);
-}
-
-
-GuiManager::GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& cameraRef, ShaderManager& shaderRef)
-	: modelsRef(&modelsRef), displayRef(&displayRef), cameraRef(&cameraRef), shadersRef(&shaderRef)
-{
-	guiVAO = createVAO();
-
-	createWindow(NK_GUI_TOPL, 50, 50);
-	createWindow(NK_GUI_TOPR, 50, 50, glm::vec3(1.0f, 0.0f, 0.0f));
-
-	createWindow(NK_GUI_BOTL, 50, 50);
-	createWindow(NK_GUI_BOTR, 50, 50);
-
-	createWindow(NK_GUI_RIGC, 50, 50);
-	createWindow(NK_GUI_LEFC, 50, 50, glm::vec3(1.0f, 1.0f, 0.0f));
-
-	createWindow(NK_GUI_TOPC, 50, 50);
-	createWindow(NK_GUI_BOTC, 50, 50);
-	createWindow(NK_GUI_CENTER, 50, 50);
-
-
-	int width, height;
-	glfwGetFramebufferSize(displayRef.window, &width, &height);
-	update(width, height);
-}
 
 unsigned int GuiManager::createVAO()
 {
@@ -150,4 +118,33 @@ unsigned int GuiManager::createVAO()
 	glEnableVertexAttribArray(0);
 
 	return VAO;
+}
+
+void GuiManager::createWindow(gui_element_align align, unsigned int elementWidth, unsigned int elementHeight, glm::vec3 color = mainColor)
+{
+	guiElement* element = new guiElement(align, padding, elementWidth, elementHeight, color);
+	guiElements.emplace_back(element);
+}
+
+GuiManager::GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& cameraRef, ShaderManager& shaderRef)
+	: modelsRef(&modelsRef), displayRef(&displayRef), cameraRef(&cameraRef), shadersRef(&shaderRef)
+{
+	guiVAO = createVAO();
+
+	createWindow(NK_GUI_TOPL, 50, 50);
+	createWindow(NK_GUI_TOPR, 50, 50, glm::vec3(1.0f, 0.0f, 0.0f));
+
+	createWindow(NK_GUI_BOTL, 50, 50);
+	createWindow(NK_GUI_BOTR, 50, 50);
+
+	createWindow(NK_GUI_RIGC, 50, 50);
+	createWindow(NK_GUI_LEFC, 50, 50, glm::vec3(1.0f, 1.0f, 0.0f));
+
+	createWindow(NK_GUI_TOPC, 50, 50);
+	createWindow(NK_GUI_BOTC, 50, 50);
+	createWindow(NK_GUI_CENTER, 50, 50);
+
+	int width, height;
+	glfwGetFramebufferSize(displayRef.window, &width, &height);
+	update(width, height);
 }
