@@ -9,13 +9,13 @@
 void RendererManager::render() {
 	glUseProgram(shadersRef->modelsShaderProgram);
 
-	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	glm::mat4 projectionMatrix = glm::mat4(1.0f);
-
 	for (auto model : modelsRef->models) {
 		if (model.second->type == NK_NOTGUI) {
 			glBindVertexArray(model.second->VAO);
 			
+			glm::mat4 modelMatrix = glm::mat4(1.0f);
+			glm::mat4 projectionMatrix = glm::mat4(1.0f);
+
 			int width, height;
 			glfwGetFramebufferSize(displayRef->window, &width, &height);
 			float ratio = (float)width / (float)height;

@@ -21,12 +21,10 @@ protected:
 	CameraManager* cameraRef;
 	ShaderManager* shadersRef;
 
-	int padding = 100;
+	int padding = 5;
 
 public:
 	GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& camRef, ShaderManager& shaderRef);
-	int evaluatePositionX();
-	int evaluatePositionY();
 	void createWindow(gui_window_align align, int sizeX, int sizeY = 0);
 	void render();
 };
