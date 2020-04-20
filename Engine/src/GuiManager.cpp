@@ -12,11 +12,11 @@ glm::vec3 GuiManager::mainColor = glm::vec3(0.3f, 0.5f, 0.8f);
 unsigned int GuiManager::padding = 50;
 
 
-guiElement::guiElement(unsigned int vao, gui_element_align elementAlign, unsigned int pad, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent)
-	: vao(vao), align(elementAlign), padding(pad), sizeX(sizeX), sizeY(sizeY), color(color), parent(parent) {}
+guiElement::guiElement(gui_element_align elementAlign, unsigned int pad, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent)
+	: align(elementAlign), padding(pad), sizeX(sizeX), sizeY(sizeY), color(color), parent(parent) {}
 
-guiElement::guiElement(unsigned int vao, unsigned int posX, unsigned int posY, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent)
-	: vao(vao), posX(posX), posY(posY), sizeX(sizeX), sizeY(sizeY), color(color), parent(parent) {}
+guiElement::guiElement(unsigned int posX, unsigned int posY, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent)
+	: posX(posX), posY(posY), sizeX(sizeX), sizeY(sizeY), color(color), parent(parent) {}
 
 
 void GuiManager::render()
@@ -27,10 +27,9 @@ void GuiManager::render()
 	update(width, height);
 
 	glUseProgram(shadersRef->guiShaderProgram);
+	glBindVertexArray(guiVAO);
 	
 	for (auto element : guiElements) {
-		glBindVertexArray(element->vao);
-
 		glm::mat4 projectionMatrix = glm::mat4(1.0f);
 		projectionMatrix = glm::ortho(0.0f, (float) width, 0.0f, (float) height, 0.0f, 0.1f);
 
@@ -101,22 +100,7 @@ void GuiManager::update(int width, int height) {
 
 void GuiManager::createWindow(gui_element_align align, unsigned int elementWidth, unsigned int elementHeight, glm::vec3 color = mainColor)
 {
-	int positions[] = { -1, 1, -1,-1, 1, 1, 1,-1 };
-
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glBufferData(GL_ARRAY_BUFFER,  8 * sizeof(int), positions, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	guiElement* element = new guiElement(VAO, align, padding, elementWidth, elementHeight, color);
+	guiElement* element = new guiElement(align, padding, elementWidth, elementHeight, color);
 	guiElements.emplace_back(element);
 }
 
@@ -124,6 +108,9 @@ void GuiManager::createWindow(gui_element_align align, unsigned int elementWidth
 GuiManager::GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& cameraRef, ShaderManager& shaderRef)
 	: modelsRef(&modelsRef), displayRef(&displayRef), cameraRef(&cameraRef), shadersRef(&shaderRef)
 {
+
+	guiVAO = createVAO();
+
 	createWindow(NK_GUI_TOPL, 50, 50);
 	createWindow(NK_GUI_TOPR, 50, 50, glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -141,4 +128,24 @@ GuiManager::GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, Came
 	int width, height;
 	glfwGetFramebufferSize(displayRef.window, &width, &height);
 	update(width, height);
+}
+
+unsigned int GuiManager::createVAO()
+{
+	int positions[] = { -1, 1, -1,-1, 1, 1, 1,-1 };
+
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(int), positions, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	return VAO;
 }

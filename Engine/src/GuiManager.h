@@ -13,8 +13,6 @@
 
 class guiElement {
 protected:
-	unsigned int vao;
-
 	gui_element_align align;
 	unsigned int padding;
 	glm::vec3 color;
@@ -27,8 +25,8 @@ protected:
 	friend class GuiManager;
 
 public:
-	guiElement(unsigned int vao, gui_element_align elementAlign, unsigned int pad, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent = nullptr);
-	guiElement(unsigned int vao, unsigned int posX, unsigned int posY, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent = nullptr);
+	guiElement(gui_element_align elementAlign, unsigned int pad, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent = nullptr);
+	guiElement(unsigned int posX, unsigned int posY, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent = nullptr);
 };
 
 class GuiManager{
@@ -41,10 +39,14 @@ protected:
 	static glm::vec3 mainColor;
 	static unsigned int padding;
 
+	unsigned int guiVAO;
+
 	std::vector<guiElement*> guiElements;
 
 public:
 	GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& cameraRef, ShaderManager& shaderRef);
+
+	unsigned int createVAO();
 
 	void createWindow(gui_element_align align, unsigned int elementWidth, unsigned int elementHeight, glm::vec3 color);
 
