@@ -6,6 +6,8 @@
 
 #include "RendererManager.h"
 
+int RendererManager::hOrthoFactor = 10;
+
 void RendererManager::render() {
 	glUseProgram(shadersRef->modelsShaderProgram);
 
@@ -25,7 +27,7 @@ void RendererManager::render() {
 			}
 			else
 			{
-				projectionMatrix = glm::ortho(-width / 200.0f, width / 200.0f, -height / 200.0f, height / 200.0f, displayRef->NEAR_PLANE, displayRef->FAR_PLANE);
+				projectionMatrix = glm::ortho((float)-hOrthoFactor * ratio, (float)hOrthoFactor * ratio, (float)-hOrthoFactor, (float)hOrthoFactor, displayRef->NEAR_PLANE, displayRef->FAR_PLANE);
 			}
 
 			modelMatrix = glm::translate(modelMatrix, model.second->position);

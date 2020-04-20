@@ -13,6 +13,8 @@ private:
 	DisplayManager* displayRef;
 	GuiManager* guiRef;
 
+	static int hOrthoFactor;
+
 public:
 	game_state state;
 
