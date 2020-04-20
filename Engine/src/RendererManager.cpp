@@ -19,7 +19,14 @@ void RendererManager::render() {
 			int width, height;
 			glfwGetFramebufferSize(displayRef->window, &width, &height);
 			float ratio = (float)width / (float)height;
-			projectionMatrix = glm::perspective(glm::radians(displayRef->FOV), ratio, displayRef->NEAR_PLANE, displayRef->FAR_PLANE);
+			
+			if (displayRef->MODE == NK_PERSPECTIVE) {
+				projectionMatrix = glm::perspective(glm::radians(displayRef->FOV), ratio, displayRef->NEAR_PLANE, displayRef->FAR_PLANE);
+			}
+			else
+			{
+				projectionMatrix = glm::ortho(-width / 200.0f, width / 200.0f, -height / 200.0f, height / 200.0f, displayRef->NEAR_PLANE, displayRef->FAR_PLANE);
+			}
 
 			modelMatrix = glm::translate(modelMatrix, model.second->position);
 			modelMatrix = glm::rotate(modelMatrix, model.second->rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));

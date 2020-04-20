@@ -2,6 +2,7 @@
 #include "GLFW/glfw3.h"
 
 #include "CameraManager.h"
+#include "DisplayManager.h"
 
 void CameraManager::update()
 {

@@ -61,24 +61,12 @@ void DisplayManager::processInputs(CameraManager* camera, RendererManager* rende
 
 	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS) {
 		FOV += FOV == 180 ? 0.0f : 1.0f;
-		std::cout << "FOV: " << FOV << "CORRECTION: " << FOVCorrection << std::endl;
+		std::cout << "FOV: " << FOV << std::endl;
 	}
 	
 	if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS) {
 		FOV -= FOV == 0 ? 0.0f : 1.0f;
-		std::cout << "FOV: " << FOV << "CORRECTION: " << FOVCorrection << std::endl;
-
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		FOVCorrection += 0.1f;
-		std::cout << "FOV: " << FOV << "CORRECTION: " << FOVCorrection << std::endl;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		FOVCorrection -= 0.1f;
-		std::cout << "FOV: " << FOV << "CORRECTION: " << FOVCorrection << std::endl;
-
+		std::cout << "FOV: " << FOV << std::endl;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
@@ -108,6 +96,7 @@ void DisplayManager::processInputs(CameraManager* camera, RendererManager* rende
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
 		renderer->state = NK_GAME;
+
 }
 
 void DisplayManager::destroy() const

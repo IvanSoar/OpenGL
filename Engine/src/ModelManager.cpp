@@ -51,7 +51,6 @@ RawModel ModelManager::loadModel(const std::string& filename)
 }
 
 
-
 void ModelManager::add(const std::string& filename, model_t type)
 {
 	RawModel* rModel = new RawModel(loadModel(filename));
@@ -97,7 +96,6 @@ unsigned int ModelManager::generateModelId()
 }
 
 
-
 void Model::move(float dx, float dy, float dz)
 {
 	position.x += dx;
@@ -139,6 +137,7 @@ void Model::setRotation(float dx, float dy, float dz)
 	rotation.y = dy;
 	rotation.z = dz;
 }
+
 
 unsigned int Model::getVAO()
 {

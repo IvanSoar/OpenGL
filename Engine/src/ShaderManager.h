@@ -30,4 +30,5 @@ public:
 	
 	std::string loadShader(std::string filename);
 	void setUniformM4(int location, glm::mat4 value);
+	void setUniform3f(int location, glm::vec3 value);
 };

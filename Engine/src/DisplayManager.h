@@ -18,9 +18,8 @@ protected:
 	float ASPECT_RATIO = (float)screenWidth / (float)screenHeight;
 
 	float FOV = 45.0f;
-	float FOVCorrection = 0.0f;
 	float NEAR_PLANE = 0.1f;
-	float FAR_PLANE = 100.0f;
+	float FAR_PLANE = 1000.0f;
 	display_mode MODE;
 
 	friend class RendererManager;
@@ -32,6 +31,7 @@ public:
 
 public:
 	DisplayManager();
+
 	void config();
 	bool isOpen() const;
 	void processInputs(CameraManager* cam, RendererManager* render);

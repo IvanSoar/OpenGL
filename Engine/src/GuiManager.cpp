@@ -7,97 +7,138 @@
 #include "GuiManager.h"
 #include "ModelManager.h"
 
-GuiManager::GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& camRef, ShaderManager& shaderRef)
-	: modelsRef(&modelsRef), displayRef(&displayRef), cameraRef(&camRef), shadersRef(&shaderRef)
-{
-	createWindow(NK_CENTER, 50, 50);
-	createWindow(NK_TOPL, 50, 50);
-	createWindow(NK_TOPC, 50, 50);
-	createWindow(NK_TOPR, 50, 50);
-	createWindow(NK_BOTL, 50, 50);
-	createWindow(NK_BOTC, 50, 50);
-	createWindow(NK_BOTR, 50, 50);
-	createWindow(NK_LEFC, 50, 50);
-	createWindow(NK_RIGC, 50, 50);
-}
 
-void GuiManager::createWindow(gui_window_align align, int sizeX, int sizeY)
-{
-	int posX = 0, posY = 0;
+glm::vec3 GuiManager::mainColor = glm::vec3(0.3f, 0.5f, 0.8f);
+unsigned int GuiManager::padding = 50;
 
-	int width, height;
-	glfwGetFramebufferSize(displayRef->window, &width, &height);
 
-	switch (align) {
-	case NK_CENTER:
-		posX = width / 2;
-		posY = height / 2;
-		break;
-	case NK_TOPL:
-		posX = sizeX / 2 + padding;
-		posY = height - sizeY / 2 - padding;
-		break;
-	case NK_TOPC:
-		posX = width / 2;
-		posY = height - sizeY / 2 - padding;
-		break;
-	case NK_TOPR:
-		posX = width - sizeX / 2 - padding;
-		posY = height - sizeY / 2 - padding;
-		break;
-	case NK_BOTL:
-		posX = sizeX / 2 + padding;
-		posY = sizeY / 2 + padding;
-		break;
-	case NK_BOTC:
-		posX = width / 2;
-		posY = sizeY / 2 + padding;
-		break;
-	case NK_BOTR:
-		posX = width - sizeX / 2 - padding;
-		posY = sizeY / 2 + padding;
-		break;
-	case NK_LEFC:
-		posX = sizeX / 2 + padding;
-		posY = height / 2;
-		break;
-	case NK_RIGC:
-		posX = width - sizeX / 2 - padding;
-		posY = height / 2;
-		break;
-	}
+guiElement::guiElement(unsigned int vao, gui_element_align elementAlign, unsigned int pad, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent)
+	: vao(vao), align(elementAlign), padding(pad), sizeX(sizeX), sizeY(sizeY), color(color), parent(parent) {}
 
-	modelsRef->add("quad", NK_GUI);
-	unsigned int ID = modelsRef->getLast();
+guiElement::guiElement(unsigned int vao, unsigned int posX, unsigned int posY, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent)
+	: vao(vao), posX(posX), posY(posY), sizeX(sizeX), sizeY(sizeY), color(color), parent(parent) {}
 
-	modelsRef->getModel(ID).setPosition((float) posX, (float) posY, 0.0f);
-	modelsRef->getModel(ID).scale((float)sizeX, (float)sizeY, 0.0f);
-}
 
 void GuiManager::render()
 {
 	int width, height;
 	glfwGetFramebufferSize(displayRef->window, &width, &height);
 
+	update(width, height);
+
 	glUseProgram(shadersRef->guiShaderProgram);
 	
-	for (auto model : modelsRef->models) {
-		if (model.second->type == NK_GUI) {
-			glBindVertexArray(model.second->VAO);
+	for (auto element : guiElements) {
+		glBindVertexArray(element->vao);
 
-			glm::mat4 projectionMatrix = glm::mat4(1.0f);
-			projectionMatrix = glm::ortho(0.0f, (float) width, 0.0f, (float) height, 0.0f, 0.1f);
+		glm::mat4 projectionMatrix = glm::mat4(1.0f);
+		projectionMatrix = glm::ortho(0.0f, (float) width, 0.0f, (float) height, 0.0f, 0.1f);
 
-			glm::mat4 modelMatrix = glm::mat4(1.0f);
-			modelMatrix = glm::translate(modelMatrix, model.second->position);
-			modelMatrix = glm::scale(modelMatrix, model.second->scaleFactor);
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(element->posX, element->posY, 0.0f));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(element->sizeX, element->sizeY, 0.0f));
 
-			shadersRef->setUniformM4(glGetUniformLocation(shadersRef->guiShaderProgram, "model"), modelMatrix);
-			shadersRef->setUniformM4(glGetUniformLocation(shadersRef->guiShaderProgram, "projection"), projectionMatrix);
+		shadersRef->setUniformM4(glGetUniformLocation(shadersRef->guiShaderProgram, "model"), modelMatrix);
+		shadersRef->setUniformM4(glGetUniformLocation(shadersRef->guiShaderProgram, "projection"), projectionMatrix);
+		shadersRef->setUniform3f(glGetUniformLocation(shadersRef->guiShaderProgram, "color"), element->color);
 
-			glDrawElements(GL_TRIANGLES, model.second->indexCount, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
+}
+
+void GuiManager::update(int width, int height) {
+	if (glfwGetKey(displayRef->window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		padding += 1;
+
+	if (glfwGetKey(displayRef->window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		padding -= 1;
+
+	for (auto element : guiElements)
+	{
+		int sizeX = element->sizeX;
+		int sizeY = element->sizeY;
+
+		switch (element->align) {
+		case NK_GUI_CENTER:
+			element->posX = width / 2;
+			element->posY = height / 2;
+			break;
+		case NK_GUI_TOPL:
+			element->posX = sizeX / 2 + padding;
+			element->posY = height - sizeY / 2 - padding;
+			break;
+		case NK_GUI_TOPC:
+			element->posX = width / 2;
+			element->posY = height - sizeY / 2 - padding;
+			break;
+		case NK_GUI_TOPR:
+			element->posX = width - sizeX / 2 - padding;
+			element->posY = height - sizeY / 2 - padding;
+			break;
+		case NK_GUI_BOTL:
+			element->posX = sizeX / 2 + padding;
+			element->posY = sizeY / 2 + padding;
+			break;
+		case NK_GUI_BOTC:
+			element->posX = width / 2;
+			element->posY = sizeY / 2 + padding;
+			break;
+		case NK_GUI_BOTR:
+			element->posX = width - sizeX / 2 - padding;
+			element->posY = sizeY / 2 + padding;
+			break;
+		case NK_GUI_LEFC:
+			element->posX = sizeX / 2 + padding;
+			element->posY = height / 2;
+			break;
+		case NK_GUI_RIGC:
+			element->posX = width - sizeX / 2 - padding;
+			element->posY = height / 2;
+			break;
 		}
 	}
 }
 
+void GuiManager::createWindow(gui_element_align align, unsigned int elementWidth, unsigned int elementHeight, glm::vec3 color = mainColor)
+{
+	int positions[] = { -1, 1, -1,-1, 1, 1, 1,-1 };
 
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glBufferData(GL_ARRAY_BUFFER,  8 * sizeof(int), positions, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	guiElement* element = new guiElement(VAO, align, padding, elementWidth, elementHeight, color);
+	guiElements.emplace_back(element);
+}
+
+
+GuiManager::GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& cameraRef, ShaderManager& shaderRef)
+	: modelsRef(&modelsRef), displayRef(&displayRef), cameraRef(&cameraRef), shadersRef(&shaderRef)
+{
+	createWindow(NK_GUI_TOPL, 50, 50);
+	createWindow(NK_GUI_TOPR, 50, 50, glm::vec3(1.0f, 0.0f, 0.0f));
+
+	createWindow(NK_GUI_BOTL, 50, 50);
+	createWindow(NK_GUI_BOTR, 50, 50);
+
+	createWindow(NK_GUI_RIGC, 50, 50);
+	createWindow(NK_GUI_LEFC, 50, 50, glm::vec3(1.0f, 0.0f, 0.0f));
+
+	createWindow(NK_GUI_TOPC, 50, 50);
+	createWindow(NK_GUI_BOTC, 50, 50);
+	createWindow(NK_GUI_CENTER, 50, 50);
+
+
+	int width, height;
+	glfwGetFramebufferSize(displayRef.window, &width, &height);
+	update(width, height);
+}

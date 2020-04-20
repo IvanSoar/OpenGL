@@ -10,7 +10,7 @@ class CameraManager {
 protected:
 	ShaderManager* shadersRef;
 
-	const float cameraSpeed = 2.0f;
+	const float cameraSpeed = 1.5f;
 
 	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);

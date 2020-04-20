@@ -101,3 +101,8 @@ void ShaderManager::setUniformM4(int location, glm::mat4 value)
 {
 	glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
 }
+
+void ShaderManager::setUniform3f(int location, glm::vec3 value)
+{
+	glUniform3fv(location, 1, &value[0]);
+}
