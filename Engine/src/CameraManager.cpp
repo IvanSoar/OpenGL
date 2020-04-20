@@ -5,6 +5,9 @@
 
 void CameraManager::update()
 {
+	glUseProgram(shadersRef->modelsShaderProgram);
+
 	glm::mat4 viewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-	shadersRef->setUniformM4(glGetUniformLocation(shadersRef->shaderProgram, "view"), viewMatrix);
+
+	shadersRef->setUniformM4(glGetUniformLocation(shadersRef->modelsShaderProgram, "view"), viewMatrix);
 }

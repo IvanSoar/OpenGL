@@ -1,28 +1,32 @@
 #include "glad/glad.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "GuiManager.h"
 #include "ModelManager.h"
 
-GuiManager::GuiManager(ModelManager& modelsRef, DisplayManager& displayRef)
-	: modelManagerRef(&modelsRef), displayManagerRef(&displayRef)
+GuiManager::GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& camRef, ShaderManager& shaderRef)
+	: modelsRef(&modelsRef), displayRef(&displayRef), cameraRef(&camRef), shadersRef(&shaderRef)
 {
-	createWindow(10, NK_TOPL, 50, 50);
-	createWindow(10, NK_TOPC, 50, 50);
-	createWindow(10, NK_TOPR, 50, 50);
-	createWindow(10, NK_BOTL, 50, 50);
-	createWindow(10, NK_BOTC, 50, 50);
-	createWindow(10, NK_BOTR, 50, 50);
-	createWindow(10, NK_LEFC, 50, 50);
-	createWindow(10, NK_RIGC, 50, 50);
-	createWindow(10, NK_CENTER, 200, 200);
+	createWindow(NK_CENTER, 50, 50);
+	createWindow(NK_TOPL, 50, 50);
+	createWindow(NK_TOPC, 50, 50);
+	createWindow(NK_TOPR, 50, 50);
+	createWindow(NK_BOTL, 50, 50);
+	createWindow(NK_BOTC, 50, 50);
+	createWindow(NK_BOTR, 50, 50);
+	createWindow(NK_LEFC, 50, 50);
+	createWindow(NK_RIGC, 50, 50);
 }
 
-void GuiManager::createWindow(int padding, gui_window_align align, int sizeX, int sizeY)
+void GuiManager::createWindow(gui_window_align align, int sizeX, int sizeY)
 {
 	int posX = 0, posY = 0;
 
 	int width, height;
-	glfwGetFramebufferSize(displayManagerRef->window, &width, &height);
+	glfwGetFramebufferSize(displayRef->window, &width, &height);
 
 	switch (align) {
 	case NK_CENTER:
@@ -63,8 +67,37 @@ void GuiManager::createWindow(int padding, gui_window_align align, int sizeX, in
 		break;
 	}
 
-	modelManagerRef->add("quad", NK_GUI);
-	unsigned int ID = modelManagerRef->getLast();
-	modelManagerRef->getModel(ID).scale((float)sizeX, (float)sizeY, 0.0f);
-	modelManagerRef->getModel(ID).setPosition(posX, posY, 0.0f);
+	modelsRef->add("quad", NK_GUI);
+	unsigned int ID = modelsRef->getLast();
+
+	modelsRef->getModel(ID).setPosition((float) posX, (float) posY, 0.0f);
+	modelsRef->getModel(ID).scale((float)sizeX, (float)sizeY, 0.0f);
 }
+
+void GuiManager::render()
+{
+	int width, height;
+	glfwGetFramebufferSize(displayRef->window, &width, &height);
+
+	glUseProgram(shadersRef->guiShaderProgram);
+	
+	for (auto model : modelsRef->models) {
+		if (model.second->type == NK_GUI) {
+			glBindVertexArray(model.second->VAO);
+
+			glm::mat4 projectionMatrix = glm::mat4(1.0f);
+			projectionMatrix = glm::ortho(0.0f, (float) width, 0.0f, (float) height, 0.0f, 0.1f);
+
+			glm::mat4 modelMatrix = glm::mat4(1.0f);
+			modelMatrix = glm::translate(modelMatrix, model.second->position);
+			modelMatrix = glm::scale(modelMatrix, model.second->scaleFactor);
+
+			shadersRef->setUniformM4(glGetUniformLocation(shadersRef->guiShaderProgram, "model"), modelMatrix);
+			shadersRef->setUniformM4(glGetUniformLocation(shadersRef->guiShaderProgram, "projection"), projectionMatrix);
+
+			glDrawElements(GL_TRIANGLES, model.second->indexCount, GL_UNSIGNED_INT, 0);
+		}
+	}
+}
+
+

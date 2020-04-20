@@ -14,34 +14,33 @@ int main()
 	ShaderManager shaders;
 	ModelManager models;
 	CameraManager camera(shaders);
-	GuiManager gui(models, display);
+	GuiManager gui(models, display, camera, shaders);
 	RendererManager renderer(models, shaders, display, gui);
 
-	std::vector<unsigned int> mundo;
-	for (int i = 0; i < 10; i++) {
-		models.add("cube");
-		mundo.push_back(models.getLast());
-	}
+	models.add("cube");
+	int cubo1 = models.getLast();
 
-	for (int i = 0; i < 10; i++) {
-		models.getModel(mundo[i]).setPosition((float) i, (float) -i, (float) - i);
-	}
+	models.add("cube");
+	int cubo2 = models.getLast();
 
+	models.add("cube");
+	int cubo3 = models.getLast();
+	
 	while (display.isOpen())
 	{
-		for (auto a : mundo) {
-			models.getModel(a).rotate(0.01f, 0.01f, 0.01f);
-		}
+		display.processInputs(&camera, &renderer);
 
 		display.prepare();
 
-		shaders.start();
-
-		display.processInputs(&camera, &renderer);
+		models.getModel(cubo1).rotate(0.01f, 0.01f, 0.01f);
+		models.getModel(cubo2).rotate(-0.01f, 0.01f, 0.01f);
+		models.getModel(cubo3).rotate(0.01f, -0.01f, 0.01f);
 
 		camera.update();
-
+		
 		renderer.render();
+		
+		gui.render();
 
 		display.update();
 	}

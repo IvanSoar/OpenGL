@@ -6,8 +6,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Utils.h"
 #include "CameraManager.h"
+#include "RendererManager.h"
+#include "Utils.h"
 
 class DisplayManager {
 protected:

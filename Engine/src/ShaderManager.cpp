@@ -13,12 +13,18 @@
 #include "ShaderManager.h"
 
 ShaderManager::ShaderManager(){
+	modelsShaderProgram = createShaderProgram("vertex", "fragment");
+	guiShaderProgram = createShaderProgram("guiVertex", "guiFragment");
+}
+
+unsigned int ShaderManager::createShaderProgram(const std::string& vertex, const std::string& fragment)
+{
 	std::string buffer1, buffer2;
 
-	buffer1 = loadShader("vertex");
+	buffer1 = loadShader(vertex);
 	const char* vertexShaderSource = buffer1.c_str();
 
-	buffer2 = loadShader("fragment");
+	buffer2 = loadShader(fragment);
 	const char* fragmentShaderSource = buffer2.c_str();
 
 	int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -45,9 +51,9 @@ ShaderManager::ShaderManager(){
 		std::cout << "não compilou fragment shader" << std::endl;
 		std::cout << infoLog << std::endl;
 	}
-	
-	shaderProgram = glCreateProgram();
-	
+
+	unsigned int shaderProgram = glCreateProgram();
+
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
@@ -62,11 +68,8 @@ ShaderManager::ShaderManager(){
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-}
 
-void ShaderManager::start()
-{
-	glUseProgram(shaderProgram);
+	return shaderProgram;
 }
 
 std::string ShaderManager::loadShader(std::string filename)

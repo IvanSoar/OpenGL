@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ModelManager.h"
+#include "ShaderManager.h"
 #include "DisplayManager.h"
 
 #include <map>
@@ -15,10 +16,17 @@ struct guiWindow {
 
 class GuiManager{
 protected:
-	ModelManager* modelManagerRef;
-	DisplayManager* displayManagerRef;
+	ModelManager* modelsRef;
+	DisplayManager* displayRef;
+	CameraManager* cameraRef;
+	ShaderManager* shadersRef;
+
+	int padding = 100;
 
 public:
-	GuiManager(ModelManager& modelsRef, DisplayManager& displayRef);
-	void createWindow(int padding, gui_window_align align, int sizeX, int sizeY = 0);
+	GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& camRef, ShaderManager& shaderRef);
+	int evaluatePositionX();
+	int evaluatePositionY();
+	void createWindow(gui_window_align align, int sizeX, int sizeY = 0);
+	void render();
 };

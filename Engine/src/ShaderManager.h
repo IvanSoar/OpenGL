@@ -14,15 +14,20 @@ private:
 	unsigned int transUniformeLoc;
 	unsigned int projUniformeLoc;
 
+
 protected:
+	unsigned int modelsShaderProgram;
+	unsigned int guiShaderProgram;
 
 	friend class RendererManager;
+	friend class CameraManager;
+	friend class GuiManager;
 
 public:
-	unsigned int shaderProgram;
 	ShaderManager();
+
+	unsigned int createShaderProgram(const std::string& vertex, const std::string& fragment);
 	
-	void start();
 	std::string loadShader(std::string filename);
 	void setUniformM4(int location, glm::mat4 value);
 };

@@ -6,12 +6,10 @@ out vec3 ourColor;
 out vec3 ourPos;
 
 uniform mat4 model;
-uniform mat4 view;
 uniform mat4 projection;
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPos, 1.0f);
+    gl_Position = projection * model * vec4(aPos, 1.0f);
     ourColor = aColor;
-    ourPos = aPos;
 }
