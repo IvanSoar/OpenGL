@@ -16,6 +16,11 @@ int calcStride(int x, int y, int size) {
 	return y * size + x;
 };
 
+int nk::mapInt(int input_start, int input_end, int output_start, int output_end, int input) {
+	return output_start + (output_end - output_start) / (input_end - input_start) * (input - input_start);
+}
+
+
 //nk::grid* nk::generateTerrain(int quads) {
 //	quads++;
 //	int size = (quads) * (quads) * 3;

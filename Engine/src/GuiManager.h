@@ -11,22 +11,22 @@
 #include <map>
 #include <vector>
 
-class guiElement {
+class guiElement{
 protected:
+	int x, y;
+	int width, height;
+
 	gui_element_align align;
-	unsigned int padding;
+
 	glm::vec3 color;
 	
-	unsigned int posX, posY;
-	unsigned int sizeX, sizeY;
-
 	guiElement* parent;
 
+protected:
+	guiElement(int x, int y, int width, int height, glm::vec3 colour, guiElement* related, gui_element_align align);
+	
 	friend class GuiManager;
-
-public:
-	guiElement(gui_element_align elementAlign, unsigned int pad, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent);
-	guiElement(unsigned int posX, unsigned int posY, unsigned int sizeX, unsigned int sizeY, glm::vec3 color, guiElement* parent);
+	friend class slider;
 };
 
 class GuiManager{
@@ -37,19 +37,26 @@ protected:
 	ShaderManager* shadersRef;
 	
 	static glm::vec3 mainColor;
-	static unsigned int padding;
+	unsigned int padding = 10;
+	bool state = false;
 
 	unsigned int guiVAO;
 
-	std::vector<guiElement*> guiElements;
+	std::vector<std::pair<gui_element_type, guiElement*>> guiElements;
+	
+	friend class slider;
 
 public:
 	GuiManager(ModelManager& modelsRef, DisplayManager& displayRef, CameraManager& cameraRef, ShaderManager& shaderRef);
 
 	unsigned int createVAO();
 
-	void createWindow(gui_element_align align, unsigned int elementWidth, unsigned int elementHeight, glm::vec3 color);
-
-	void update(int width, int height);
 	void render();
+	void update(std::pair<gui_element_type, guiElement*>element, int width, int height);
+
+	guiElement* window(gui_element_align align, int width, int height, guiElement* parent);
+	guiElement* slider(int x, int y, int size, guiElement* parent, int* value);
+
+	bool isMouseOver(int x, int y, int width, int height);
+	bool isButtonDown(int mouseButton);
 };

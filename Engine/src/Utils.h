@@ -43,6 +43,16 @@ enum class game_state : unsigned char {
 #define NK_MENU game_state::MENU
 #define NK_GAME game_state::GAME
 
+enum class gui_element_type : unsigned char {
+	OTHER, WINDOW, CLOSE_WINDOW_BUTTON, SLIDER_HEAD, SLIDER_BODY
+};
+
+#define OTHER gui_element_type::OTHER
+#define WINDOW gui_element_type::WINDOW
+#define CLOSE_BUTTON gui_element_type::CLOSE_WINDOW_BUTTON
+#define SLIDER_HEAD gui_element_type::SLIDER_HEAD
+#define SLIDER_BODY gui_element_type::SLIDER_BODY
+
 namespace nk
 {
 	struct grid {
@@ -52,4 +62,6 @@ namespace nk
 	};
 
 	void Log(const std::string& msg, int type = 2);
+
+	int mapInt(int input_start, int input_end, int output_start, int output_end, int input);
 }
