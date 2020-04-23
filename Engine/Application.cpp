@@ -5,7 +5,6 @@
 #include "ModelManager.h"
 #include "RendererManager.h"
 #include "CameraManager.h"
-#include "GuiManager.h"
 #include "Utils.h"
 
 #include <ctime>
@@ -16,8 +15,7 @@ int main()
 	ShaderManager shaders;
 	ModelManager models;
 	CameraManager camera(shaders);
-	GuiManager gui(models, display, camera, shaders);
-	RendererManager renderer(models, shaders, display, gui);
+	RendererManager renderer(models, shaders, display);
 
 	models.add("cube");
 	int cubo1 = models.getLast();
@@ -34,8 +32,6 @@ int main()
 		
 		renderer.render();
 		
-		gui.render();
-
 		display.update();
 	}
 

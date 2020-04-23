@@ -27,7 +27,6 @@ public:
 
 class Model {
 private:
-	model_t type;
 	unsigned int modelId;
 	std::string ModelName;
 
@@ -44,8 +43,8 @@ protected:
 	friend class GuiManager;
 
 public:
-	Model(unsigned int id, const std::string& name, model_t type, unsigned int vao, unsigned int vertexCount, unsigned int indexCount)
-		: modelId(id), ModelName(name), VAO(vao), type(type), vertexCount(vertexCount), indexCount(indexCount) {}
+	Model(unsigned int id, const std::string& name, unsigned int vao, unsigned int vertexCount, unsigned int indexCount)
+		: modelId(id), ModelName(name), VAO(vao), vertexCount(vertexCount), indexCount(indexCount) {}
 
 	void move(float dx, float dy, float dz);
 	void rotate(float dx, float dy, float dz);
@@ -70,7 +69,7 @@ protected:
 	friend class GuiManager;
 
 public:
-	void add(const std::string& filename, model_t type = NK_NOTGUI);
+	void add(const std::string& filename);
 	Model& getModel(unsigned int modelId);
 	unsigned int getLast();
 

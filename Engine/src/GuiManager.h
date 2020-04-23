@@ -31,7 +31,6 @@ protected:
 
 class GuiManager{
 protected:
-	ModelManager* modelsRef;
 	DisplayManager* displayRef;
 	CameraManager* cameraRef;
 	ShaderManager* shadersRef;
@@ -52,10 +51,10 @@ public:
 	unsigned int createVAO();
 
 	void render();
-	void update(std::pair<gui_element_type, guiElement*>element, int width, int height);
+	void update(std::pair<gui_element_type, guiElement*> element, int width, int height);
 
 	guiElement* window(gui_element_align align, int width, int height, guiElement* parent);
-	guiElement* slider(int x, int y, int size, guiElement* parent, int* value);
+	guiElement* slider(int x, int y, int size, guiElement* parent, float* value);
 
 	bool isMouseOver(int x, int y, int width, int height);
 	bool isButtonDown(int mouseButton);

@@ -51,7 +51,7 @@ RawModel ModelManager::loadModel(const std::string& filename)
 }
 
 
-void ModelManager::add(const std::string& filename, model_t type)
+void ModelManager::add(const std::string& filename)
 {
 	RawModel* rModel = new RawModel(loadModel(filename));
 
@@ -76,7 +76,7 @@ void ModelManager::add(const std::string& filename, model_t type)
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	Model* model = new Model(generateModelId(), filename, type, VAO, rModel->vertexCount, rModel->indexCount);
+	Model* model = new Model(generateModelId(), filename, VAO, rModel->vertexCount, rModel->indexCount);
 	models.emplace(std::pair<unsigned int, Model*>(model->getID(), model));
 }
 
