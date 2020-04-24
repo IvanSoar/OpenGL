@@ -1,40 +1,31 @@
-#include "glad/glad.h"
-
-#include "DisplayManager.h"
-#include "ShaderManager.h"
-#include "ModelManager.h"
-#include "RendererManager.h"
-#include "CameraManager.h"
-#include "Utils.h"
-
-#include <ctime>
+#include "Display.h"
+#include "Shaders.h"
+#include "Models.h"
+#include "Render.h"
+#include "Camera.h"
 
 int main()
 {
-	DisplayManager display;
-	ShaderManager shaders;
-	ModelManager models;
-	CameraManager camera(shaders);
-	RendererManager renderer(models, shaders, display);
+	Display::init(800, 600);
 
-	models.add("cube");
-	int cubo1 = models.getLast();
+	Shaders::addShaders("res/shaders/vertex.shader", "res/shaders/fragment.shader");
+	Shaders::addShaders("res/shaders/guiVertex.shader", "res/shaders/guiFragment.shader");
 
-	while (display.isOpen())
-	{
-		display.processInputs(&camera, &renderer);
+	Model* model = Models::addObjModel("res/models/cube.model");
 
-		display.prepare();
+	while (Display::isOpen()) {
+		Display::prepare();
 
-		models.getModel(cubo1).rotate(0.01f, 0.01f, 0.01f);
+		model->rotate(0.1f, 0.1f, 0.1f);
 
-		camera.update();
-		
-		renderer.render();
-		
-		display.update();
+		Render::render();
+
+		Camera::update();
+
+		Display::update();
 	}
 
-	display.destroy();
+	Shaders::terminate();
+	Display::terminate();
 	return 0;
 }

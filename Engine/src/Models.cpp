@@ -1,14 +1,18 @@
-#include <glad/glad.h>
-
-#include "ModelManager.h"
-#include "Utils.h"
+#include "GLAD/glad.h"
 
 #include <fstream>
 #include <sstream>
-#include <iostream>
-#include <utility>
+#include <string>
 
-RawModel ModelManager::loadModel(const std::string& filename)
+#include "Models.h"
+
+Models& Models::get()
+{
+	static Models instance;
+	return instance;
+}
+
+rawModel Models::loadModel(const std::string& filepath)
 {
 	float v1, v2, v3, v4, v5, v6;
 	unsigned int i1, i2, i3;
@@ -18,7 +22,7 @@ RawModel ModelManager::loadModel(const std::string& filename)
 	std::vector<float> vertexData;
 	std::vector<unsigned int> indexData;
 
-	std::ifstream file(MODELS_DIR + filename + MODELS_EXT, std::ifstream::in);
+	std::ifstream file(filepath, std::ifstream::in);
 	std::string line;
 
 	while (!file.eof()) {
@@ -50,10 +54,9 @@ RawModel ModelManager::loadModel(const std::string& filename)
 	return { vertexData, indexData, vertex, index };
 }
 
-
-void ModelManager::add(const std::string& filename)
+Model* Models::addObjModel(const std::string& filepath)
 {
-	RawModel* rModel = new RawModel(loadModel(filename));
+	rawModel* model = new rawModel(get().loadModel(filepath));
 
 	unsigned int VAO;
 	unsigned int VBO;
@@ -64,11 +67,11 @@ void ModelManager::add(const std::string& filename)
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, rModel->vertexCount * 6 * sizeof(float), rModel->vertexData.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, model->vertexCount * 6 * sizeof(float), model->vertexData.data(), GL_STATIC_DRAW);
 
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, rModel->indexCount * sizeof(unsigned int), rModel->indexData.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, model->indexCount * sizeof(unsigned int), model->indexData.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -76,23 +79,16 @@ void ModelManager::add(const std::string& filename)
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	Model* model = new Model(generateModelId(), filename, VAO, rModel->vertexCount, rModel->indexCount);
-	models.emplace(std::pair<unsigned int, Model*>(model->getID(), model));
+	Model* modelData = new Model(VAO, model->vertexCount, model->indexCount);
+	get().modelsList.emplace_back(modelData);
+
+	delete model;
+	return modelData;
 }
 
-Model& ModelManager::getModel(unsigned int modelId)
+std::vector<Model*> Models::getModels()
 {
-	return *models[modelId];
-}
-
-unsigned int ModelManager::getLast()
-{
-	return models.size();
-}
-
-unsigned int ModelManager::generateModelId()
-{
-	return models.size() + 1;
+	return get().modelsList;
 }
 
 
@@ -144,7 +140,12 @@ unsigned int Model::getVAO()
 	return VAO;
 }
 
-unsigned int Model::getID()
+unsigned int Model::getVertexCount()
 {
-	return modelId;
+	return vertexCount;
+}
+
+unsigned int Model::getIndexCount()
+{
+	return indexCount;
 }

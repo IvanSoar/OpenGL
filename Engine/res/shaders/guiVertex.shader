@@ -8,6 +8,7 @@ uniform mat4 model;
 uniform mat4 projection;
 uniform vec3 color;
 
+
 void main()
 {
     gl_Position = projection * model * vec4(aPos, 0.0f, 1.0f);
