@@ -9,35 +9,32 @@
 #include "Display.h"
 #include "Models.h"
 #include "Shaders.h"
+#include "UserInterface.h"
 
 Render& Render::get()
 {
 	static Render instance;
-	instance.renderMode = IVS_PERSP_MODE;
-	instance.FOV = 70.0f;
-	instance.NEAR_PLANE = 0.1f;
-	instance.FAR_PLANE = 100.0f;
 	return instance;
 }
 
 void Render::renderModels()
 {
+	int width, height;
+	glfwGetFramebufferSize(Display::getWindow(), &width, &height);
+	float ratio = (float)width / (float)height;
+
 	for (auto model : Models::getModels()) {
 		glBindVertexArray(model->getVAO());
 
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		glm::mat4 projectionMatrix = glm::mat4(1.0f);
+		glm::mat4 projectionMatrix = glm::mat4(1.0f);		
 
-		int width, height;
-		glfwGetFramebufferSize(Display::getWindow(), &width, &height);
-		float ratio = (float)width / (float)height;
-
-		if (get().renderMode == IVS_PERSP_MODE) {
-			projectionMatrix = glm::perspective(glm::radians(get().FOV), ratio, get().NEAR_PLANE, get().FAR_PLANE);
+		if (config::renderMode) {
+			projectionMatrix = glm::perspective(glm::radians(config::fov), ratio, config::nearPlaneP, config::farPlaneP);
 		}
 		else
 		{
-			projectionMatrix = glm::ortho(-get().hOrthoFactor * ratio, get().hOrthoFactor * ratio, -get().hOrthoFactor, get().hOrthoFactor, get().NEAR_PLANE, get().FAR_PLANE);
+			projectionMatrix = glm::ortho(-config::hOrthoFactor * ratio, config::hOrthoFactor * ratio, (float)-config::hOrthoFactor, (float)config::hOrthoFactor, config::nearPlaneO, config::farPlaneO);
 		}
 
 		modelMatrix = glm::translate(modelMatrix, model->position);
@@ -53,8 +50,38 @@ void Render::renderModels()
 	}
 }
 
+void Render::renderUi()
+{
+	int width, height;
+	glfwGetFramebufferSize(Display::getWindow(), &width, &height);
+
+	for (auto component : UserInterface::getComponents()) {
+		component->update();
+	}
+
+	for (auto element : UserInterface::getElements()) {
+		glBindVertexArray(UserInterface::getVAO());
+
+		glm::mat4 projectionMatrix = glm::mat4(1.0f);
+		projectionMatrix = glm::ortho(0.0f, (float)width, (float)height, 0.0f, 0.0f, 0.1f);
+		Shaders::setUniformM4(glGetUniformLocation(Shaders::getShaders()[1], "projection"), projectionMatrix);
+
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(element->x, element->y, 0.0f));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(element->width, element->height, 0.0f));
+
+		Shaders::setUniformM4(glGetUniformLocation(Shaders::getShaders()[1], "model"), modelMatrix);
+		Shaders::setUniform3f(glGetUniformLocation(Shaders::getShaders()[1], "color"), element->color);
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
+}
+
 void Render::render()
 {
 	Shaders::activate(0);
 	get().renderModels();
+
+	Shaders::activate(1);
+	get().renderUi();
 }

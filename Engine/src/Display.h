@@ -5,10 +5,7 @@
 class Display
 {
 private:
-	unsigned int screenWidth;
-	unsigned int screenHeight;
 	GLFWwindow* window;
-
 private:
 	static Display& get();
 	void initImpl();

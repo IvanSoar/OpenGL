@@ -8,6 +8,7 @@
 
 #include "Camera.h"
 #include "Shaders.h"
+#include "ivsEngine.h"
 
 Camera& Camera::get()
 {
@@ -17,9 +18,9 @@ Camera& Camera::get()
 
 void Camera::update()
 {
-	Shaders::activate(0);
+	Shaders::activate(0); // controlar qual shader program está vinculado a que
 
-	glm::mat4 viewMatrix = glm::lookAt(get().cameraPos, get().cameraPos + get().cameraFront, get().cameraUp);
+	glm::mat4 viewMatrix = glm::lookAt(config::cameraPos, config::cameraPos + config::cameraFront, config::cameraUp);
 
 	Shaders::setUniformM4(glGetUniformLocation(Shaders::getShaders()[0], "view"), viewMatrix);
 }

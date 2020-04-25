@@ -23,7 +23,7 @@ private:
 	void createShaderProgram(unsigned int vertexShader, unsigned int fragmentShader);
 	std::string loadShader(const std::string& filename);
 	unsigned int createShader(const std::string& filename, GLenum type);
-	int checkShader(unsigned int shader);
+	void checkShader(unsigned int shader);
 
 public:
 	static void addShaders(const std::string& vertexFilePath, const std::string& fragmentFilePath);

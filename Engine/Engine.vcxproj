@@ -13,20 +13,24 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Controller.cpp" />
     <ClCompile Include="src\Display.cpp" />
-    <ClCompile Include="src\ivsEngine.cpp" />
     <ClCompile Include="src\Models.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Shaders.cpp" />
+    <ClCompile Include="src\UserInterface.cpp" />
     <ClCompile Include="src\vendor\glad\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Controller.h" />
     <ClInclude Include="src\Display.h" />
     <ClInclude Include="src\ivsEngine.h" />
     <ClInclude Include="src\Models.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Shaders.h" />
+    <ClInclude Include="src\Terrain.h" />
+    <ClInclude Include="src\UserInterface.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

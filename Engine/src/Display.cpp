@@ -2,6 +2,7 @@
 #include "GLFW/glfw3.h"
 
 #include "Display.h"
+#include "Controller.h"
 #include "ivsEngine.h"
 
 void aspectRatioCorrection(GLFWwindow* window, int width, int height) {
@@ -16,8 +17,6 @@ Display& Display::get()
 
 void Display::init(unsigned int width, unsigned int height)
 {
-	get().screenWidth = width;
-	get().screenHeight = height;
 	get().initImpl();
 }
 
@@ -29,19 +28,26 @@ void Display::initImpl()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(screenWidth, screenHeight, "OpenGL", NULL, NULL);
-	ivs::log("Creating a window", !!window);
-	glfwMakeContextCurrent(window);
+	get().window = glfwCreateWindow(config::screenWidth, config::screenHeight, "OpenGL", NULL, NULL);
+	ivs::log("Creating a window", !!get().window);
+	glfwMakeContextCurrent(get().window);
 	
-	glfwSetFramebufferSizeCallback(window, aspectRatioCorrection);
+	glfwSetFramebufferSizeCallback(get().window, aspectRatioCorrection);
 	
 	ivs::log("Initiating GLAD", gladLoadGLLoader((GLADloadproc)glfwGetProcAddress));
 
-	glfwSwapInterval(1);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	glfwSwapInterval(config::vSync);
+
+	if(config::dephtest)
+		glEnable(GL_DEPTH_TEST);
+	else
+		glDisable(GL_DEPTH_TEST);
+
+	if (config::cullFace) {
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW);
+	}
 }
 
 bool Display::isOpen()
@@ -51,7 +57,7 @@ bool Display::isOpen()
 
 void Display::prepare()
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(config::clearColor.r, config::clearColor.g, config::clearColor.b, config::clearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

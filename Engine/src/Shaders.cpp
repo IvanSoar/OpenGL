@@ -36,9 +36,9 @@ unsigned int Shaders::createShader(const std::string& filePath, GLenum type)
 	glShaderSource(shader, 1, &shaderSource, 0);
 	glCompileShader(shader);
 
-	if (checkShader(shader)) {
-		return shader;
-	}
+	checkShader(shader);
+		
+	return shader;
 }
 
 std::string Shaders::loadShader(const std::string& filepath)
@@ -66,7 +66,7 @@ std::string Shaders::loadShader(const std::string& filepath)
 	return code;
 }
 
-int Shaders::checkShader(unsigned int shader)
+void Shaders::checkShader(unsigned int shader)
 {
 	GLint success;
 	GLchar infolog[1024];
@@ -76,10 +76,7 @@ int Shaders::checkShader(unsigned int shader)
 		glGetShaderInfoLog(shader, 1024, NULL, infolog);
 		ivs::log("shader", success);
 		ivs::log(infolog);
-		return 0;
 	}
-
-	return 1;
 }
 
 void Shaders::createShaderProgram(unsigned int vertexShader, unsigned int fragmentShader)
