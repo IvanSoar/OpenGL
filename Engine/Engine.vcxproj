@@ -25,7 +25,7 @@
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Controller.h" />
     <ClInclude Include="src\Display.h" />
-    <ClInclude Include="src\ivsEngine.h" />
+    <ClInclude Include="ivsEngine.h" />
     <ClInclude Include="src\Models.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Shaders.h" />

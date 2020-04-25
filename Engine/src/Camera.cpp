@@ -8,7 +8,7 @@
 
 #include "Camera.h"
 #include "Shaders.h"
-#include "ivsEngine.h"
+#include "../ivsEngine.h"
 
 Camera& Camera::get()
 {

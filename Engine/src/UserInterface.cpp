@@ -6,7 +6,7 @@
 #include "UserInterface.h"
 #include "Display.h"
 #include "Controller.h"
-#include "ivsEngine.h"
+#include "../ivsEngine.h"
 
 UserInterface& UserInterface::get()
 {

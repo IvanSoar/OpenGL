@@ -3,7 +3,7 @@
 
 #include "Display.h"
 #include "Controller.h"
-#include "ivsEngine.h"
+#include "../ivsEngine.h"
 
 void aspectRatioCorrection(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);

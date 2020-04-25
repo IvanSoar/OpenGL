@@ -9,7 +9,7 @@
 #include <string>
 
 #include "Shaders.h"
-#include "ivsEngine.h"
+#include "../ivsEngine.h"
 
 Shaders& Shaders::get()
 {

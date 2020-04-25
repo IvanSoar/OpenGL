@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ivsEngine.h"
+#include "../ivsEngine.h"
 
 class Render {
 private:
