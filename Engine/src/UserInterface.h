@@ -76,6 +76,7 @@ protected:
 	friend class Slider;
 
 public:
+	static void init();
 	static void slider(int x, int y, int width, float& value, float min, float max, float step);
 	static void button(int x, int y, int width, int height, bool& value);
 	static void addElement(uiElement* element);

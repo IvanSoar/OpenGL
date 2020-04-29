@@ -11,11 +11,15 @@
 UserInterface& UserInterface::get()
 {
 	static UserInterface instance;
+	return instance;
+}
 
+void UserInterface::init()
+{
 	float positions[] = { -0.5f, 0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
 
-	glGenVertexArrays(1, &instance.VAO);
-	glBindVertexArray(instance.VAO);
+	glGenVertexArrays(1, &get().VAO);
+	glBindVertexArray(get().VAO);
 
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
@@ -25,8 +29,6 @@ UserInterface& UserInterface::get()
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
-	return instance;
 }
 
 void UserInterface::slider(int x, int y, int width, float& value, float min, float max, float step)

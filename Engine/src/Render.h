@@ -8,10 +8,10 @@ private:
 
 	static Render& get();
 	
-	void renderModels();
-	void renderUi();
+	static void renderModels();
+	static void renderUi();
+	static void renderTerrain();
 
 public:
-	static void init();
 	static void render();
 };

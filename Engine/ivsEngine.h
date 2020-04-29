@@ -48,9 +48,11 @@ public:
 	inline static	glm::vec4	clearColor = { 0.2f, 0.8f, 0.3f, 1.0f };
 	inline static	bool		renderMode = true;
 	inline static	float		cameraSpeed = 1.0f;
-	inline static	glm::vec3	cameraPos = { 0.0f, 0.0f, 3.0f };
+	inline static	glm::vec3	cameraPos = { 0.0f, 1.0f, 3.0f };
 	inline static	glm::vec3	cameraFront = { 0.0f, 0.0f, -1.0f };
 	inline static	glm::vec3	cameraUp = { 0.0f, 1.0f, 0.0f };
 	inline static	glm::vec4	uiColor = { 1.0f, 0.5f, 0.0f, 1.0f };
 	inline static	int			padding = 10;
+	inline static	int			maxVertexperTerrain = 10;
+	inline static	int			terrainSize  = 10;
 };

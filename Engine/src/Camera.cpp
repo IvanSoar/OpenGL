@@ -18,9 +18,11 @@ Camera& Camera::get()
 
 void Camera::update()
 {
-	Shaders::activate(0); // controlar qual shader program está vinculado a que
-
 	glm::mat4 viewMatrix = glm::lookAt(config::cameraPos, config::cameraPos + config::cameraFront, config::cameraUp);
 
+	Shaders::activate(0);
 	Shaders::setUniformM4(glGetUniformLocation(Shaders::getShaders()[0], "view"), viewMatrix);
+
+	Shaders::activate(2);
+	Shaders::setUniformM4(glGetUniformLocation(Shaders::getShaders()[2], "view"), viewMatrix);
 }

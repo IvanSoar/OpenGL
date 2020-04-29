@@ -27,10 +27,14 @@ private:
 
 public:
 	static void addShaders(const std::string& vertexFilePath, const std::string& fragmentFilePath);
+	
+	static std::vector<unsigned int> getShaders();
+	
+	static void activate(unsigned int shaderProgram);
 
 	static void setUniformM4(int location, glm::mat4 value);
 	static void setUniform3f(int location, glm::vec3 value);
+	static void setUniform4f(int location, glm::vec4 value);
+
 	static void terminate();
-	static void activate(unsigned int shaderProgram);
-	static std::vector<unsigned int> getShaders();
 };

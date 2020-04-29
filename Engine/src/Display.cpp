@@ -15,12 +15,7 @@ Display& Display::get()
 	return instance;
 }
 
-void Display::init(unsigned int width, unsigned int height)
-{
-	get().initImpl();
-}
-
-void Display::initImpl()
+void Display::init()
 {
 	ivs::log("Initiating GLFW", glfwInit());
 
@@ -31,14 +26,14 @@ void Display::initImpl()
 	get().window = glfwCreateWindow(config::screenWidth, config::screenHeight, "OpenGL", NULL, NULL);
 	ivs::log("Creating a window", !!get().window);
 	glfwMakeContextCurrent(get().window);
-	
+
 	glfwSetFramebufferSizeCallback(get().window, aspectRatioCorrection);
-	
+
 	ivs::log("Initiating GLAD", gladLoadGLLoader((GLADloadproc)glfwGetProcAddress));
 
 	glfwSwapInterval(config::vSync);
 
-	if(config::dephtest)
+	if (config::dephtest)
 		glEnable(GL_DEPTH_TEST);
 	else
 		glDisable(GL_DEPTH_TEST);

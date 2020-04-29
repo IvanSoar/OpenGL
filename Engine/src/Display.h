@@ -8,11 +8,10 @@ private:
 	GLFWwindow* window;
 private:
 	static Display& get();
-	void initImpl();
 	Display() {}
 
 public:
-	static void init(unsigned int width, unsigned int height);
+	static void init();
 	static bool isOpen();
 	static void terminate();
 	static void prepare();
