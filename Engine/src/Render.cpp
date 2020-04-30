@@ -53,19 +53,23 @@ void Render::renderModels()
 
 void Render::renderUi()
 {
-	int width, height;
-	glfwGetFramebufferSize(Display::getWindow(), &width, &height);
-	
 	glBindVertexArray(UserInterface::getVAO());
 
+	int width, height;
+	glfwGetFramebufferSize(Display::getWindow(), &width, &height);
+	glm::mat4 projectionMatrix = glm::mat4(1.0f);
+	projectionMatrix = glm::ortho(0.0f, (float)width, (float)height, 0.0f, 0.0f, 0.1f);
+	Shaders::setUniformM4(glGetUniformLocation(Shaders::getShaders()[1], "projection"), projectionMatrix);
+	
 	for (auto component : UserInterface::getComponents()) {
 		component->update();
 	}
 
+	for (auto container : UserInterface::getContainers()) {
+		container->update();
+	}
+
 	for (auto element : UserInterface::getElements()) {
-		glm::mat4 projectionMatrix = glm::mat4(1.0f);
-		projectionMatrix = glm::ortho(0.0f, (float)width, (float)height, 0.0f, 0.0f, 0.1f);
-		Shaders::setUniformM4(glGetUniformLocation(Shaders::getShaders()[1], "projection"), projectionMatrix);
 
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(element->x, element->y, 0.0f));
