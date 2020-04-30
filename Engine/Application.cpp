@@ -34,12 +34,23 @@ int main()
 	UserInterface::slider(0, 300, 200, g, 0, 1, 0.1f);
 	UserInterface::slider(0, 350, 200, b, 0, 1, 0.1f);
 
+	UserInterface::slider(0, 400, 200, config::maxVertexperTerrain, 1, 1024, 10);
+	UserInterface::slider(0, 450, 200, config::terrainSize, 1, 1000, 10);
+
 	Terrain::generate();
+
+	bool generate = false;
+	UserInterface::button(0, 500, 200, 50, generate);
 
 	while (Display::isOpen()) {
 		Controller::processInputs();
 
 		Display::prepare();
+
+		if (generate) {
+			Terrain::generate();
+			generate = false;
+		}
 
 		model->rotate(value, value, value);
 		Terrain::changeColor(r, g, b, 1.0f);

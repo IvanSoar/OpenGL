@@ -90,8 +90,8 @@ void Controller::processInputs()
 		config::cameraPos += glm::normalize(glm::cross(config::cameraFront, config::cameraUp)) * config::cameraSpeed;
 
 	if (glfwGetKey(Display::getWindow(), GLFW_KEY_SPACE) == GLFW_PRESS) {
-		config::cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-		config::cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		config::cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+		config::cameraPos = config::cameraPos;
+		config::cameraFront = config::cameraFront;
+		config::cameraUp = config::cameraUp;
 	}
 }
