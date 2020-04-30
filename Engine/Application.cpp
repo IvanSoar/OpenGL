@@ -21,8 +21,8 @@ int main()
 	Controller::init();
 	UserInterface::init();
 
-	UserInterface::slider(0, 0, 200, config::clearColor.r, 0, 1, 0.1f);
-	UserInterface::slider(0, 50, 200, config::clearColor.g, 0, 1, 0.1f);
+	UserInterface::slider(0, 000, 200, config::clearColor.r, 0, 1, 0.1f);
+	UserInterface::slider(0, 500, 200, config::clearColor.g, 0, 1, 0.1f);
 	UserInterface::slider(0, 100, 200, config::clearColor.b, 0, 1, 0.1f);
 	UserInterface::slider(0, 150, 200, config::cameraSpeed, 0.1, 3.0, 0.1f);
 	
@@ -37,10 +37,16 @@ int main()
 	UserInterface::slider(0, 400, 200, config::maxVertexperTerrain, 1, 1024, 10);
 	UserInterface::slider(0, 450, 200, config::terrainSize, 1, 1000, 10);
 
+	
 	Terrain::generate();
 
 	bool generate = false;
 	UserInterface::button(0, 500, 200, 50, generate);
+
+	UserInterface::panel(IVS_HALIGN_RIGHT);
+	UserInterface::panel(IVS_HALIGN_LEFT);
+	UserInterface::panel(IVS_HALIGN_CENTER, IVS_VALIGN_BOTTOM, 0.2f, 0.1f);
+	UserInterface::panel(IVS_HALIGN_CENTER, IVS_VALIGN_TOP, 0.2f, 0.1f);
 
 	while (Display::isOpen()) {
 		Controller::processInputs();

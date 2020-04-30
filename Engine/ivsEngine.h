@@ -10,6 +10,23 @@
 #define IVS_FAILURE ": failure!"
 #define IVS_SUCCESS ": success!"
 
+enum class ui_h_align : unsigned char
+{
+	LEFT, CENTER, RIGHT
+};
+
+enum class ui_v_align : unsigned char
+{
+	TOP, CENTER, BOTTOM
+};
+
+#define IVS_HALIGN_LEFT ui_h_align::LEFT
+#define IVS_HALIGN_CENTER ui_h_align::CENTER
+#define IVS_HALIGN_RIGHT ui_h_align::RIGHT
+#define IVS_VALIGN_TOP ui_v_align::TOP
+#define IVS_VALIGN_CENTER ui_v_align::CENTER
+#define IVS_VALIGN_BOTTOM ui_v_align::BOTTOM
+
 namespace ivs {
 	template<typename type>
 	void log(type msg, int value = 2)
@@ -52,7 +69,11 @@ public:
 	inline static	glm::vec3	cameraFront = { 0.0f, 0.0f, -1.0f };
 	inline static	glm::vec3	cameraUp = { 0.0f, 1.0f, 0.0f };
 	inline static	glm::vec4	uiColor = { 1.0f, 0.5f, 0.0f, 1.0f };
+	inline static	glm::vec4	uiSecondaryColor = uiColor * 0.3f;
+	inline static	glm::vec4	uiDetailColor = uiColor * 0.5f;
 	inline static	int			padding = 10;
 	inline static	float		maxVertexperTerrain = 10;
 	inline static	float		terrainSize  = 10;
+	inline static	float		uiWidthFactor = 0.3f;
+	inline static	float		uiHeightFactor = 1.0f;
 };
