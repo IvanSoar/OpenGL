@@ -29,10 +29,10 @@ int main()
 	float value = 0.0f;
 	UserInterface::slider(0, 200, 200, value, -0.3, 0.3, 0.1f);
 
-	float r = 1.0f, g = 0.5f, b = 0.3f;
-	/*UserInterface::slider(0, 250, 200, r, 0, 1, 0.1f);
+	float r, g, b;
+	UserInterface::slider(0, 250, 200, r, 0, 1, 0.1f);
 	UserInterface::slider(0, 300, 200, g, 0, 1, 0.1f);
-	UserInterface::slider(0, 350, 200, b, 0, 1, 0.1f);*/
+	UserInterface::slider(0, 350, 200, b, 0, 1, 0.1f);
 
 	Terrain::generate();
 
