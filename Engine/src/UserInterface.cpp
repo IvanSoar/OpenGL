@@ -33,14 +33,17 @@ void UserInterface::init()
 
 void UserInterface::slider(int x, int y, int width, float& value, float min, float max, float step)
 {
-	Slider* slider = new Slider(x, y, width, value, min, max, step);
-	addComponent(slider);
+	addComponent(new Slider(x, y, width, value, min, max, step));
 }
 
 void UserInterface::button(int x, int y, int width, int height, bool& value)
 {
-	Button* button = new Button(x, y, width, height, value);
-	addComponent(button);
+	addComponent(new Button(x, y, width, height, value));
+}
+
+void UserInterface::panel(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor)
+{
+	addContainer(new Panel(halign, valign, widthFactor, heightFactor, true));
 }
 
 std::vector<uiElement*> UserInterface::getElements()
@@ -53,14 +56,14 @@ std::vector<uiComponent*> UserInterface::getComponents()
 	return get().componentList;
 }
 
+std::vector<uiContainer*> UserInterface::getContainers()
+{
+	return get().containerList;
+}
+
 unsigned int UserInterface::getVAO()
 {
 	return get().VAO;
-}
-
-void UserInterface::addComponent(uiComponent* component)
-{
-	get().componentList.emplace_back(component);
 }
 
 void UserInterface::addElement(uiElement* element)
@@ -68,11 +71,21 @@ void UserInterface::addElement(uiElement* element)
 	get().elementList.emplace_back(element);
 }
 
+void UserInterface::addComponent(uiComponent* component)
+{
+	get().componentList.emplace_back(component);
+}
+
+void UserInterface::addContainer(uiContainer* container)
+{
+	get().containerList.emplace_back(container);
+}
+
 Slider::Slider(int x, int y, int width, float& value, float min, float max, float step)
 	: x(x), y(y), width(width), value(&value), state(false), min(min), max(max), step(step)
 {
-	body = new uiElement(x + width / 2 + config::padding, y + width / 40 + config::padding, width, width / 20, config::uiColor, nullptr);
-	head = new uiElement(body->x, body->y, body->height, body->height * 2, body->color * 0.5f, body);
+	body = new uiElement(x + width / 2 + config::padding, y + width / 40 + config::padding, width, width / 20, config::uiColor);
+	head = new uiElement(body->x, body->y, body->height, body->height * 2, config::uiDetailColor);
 
 	UserInterface::addElement(head);
 	UserInterface::addElement(body);
@@ -111,7 +124,7 @@ void Slider::update()
 Button::Button(int x, int y, int width, int height, bool& value)
 	: x(x), y(y), width(width), height(height), value(&value)
 {
-	body = new uiElement(x + width / 2 + config::padding, y + height / 2 + config::padding, width, height, config::uiColor, nullptr);
+	body = new uiElement(x + width / 2 + config::padding, y + height / 2 + config::padding, width, height, config::uiColor);
 
 	UserInterface::addElement(body);
 }
@@ -139,4 +152,63 @@ void Button::update()
 		body->height += 2;
 		body->color /= 0.5f;
 	}
+}
+
+Panel::Panel(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor, bool isVisible)
+	: isVisible(isVisible), uiContainer(halign, valign, widthFactor, heightFactor)
+{
+	padding = config::padding;
+	
+	body = new uiElement(0, 0, 0, 0, glm::vec3(0));
+
+	update();
+
+	UserInterface::addElement(body);
+}
+
+void Panel::update()
+{
+	int screenWidth, screenHeight;
+	glfwGetFramebufferSize(Display::getWindow(), &screenWidth, &screenHeight);
+
+	this->width = screenWidth * widthFactor;
+	this->height = screenHeight * heightFactor;
+
+	this->width -= widthFactor == 1.0f ? padding * 2 : 0;
+	this->height -= heightFactor == 1.0f ? padding * 2 : 0;
+
+	switch (halign) {
+	case IVS_HALIGN_LEFT:
+		x = this->width / 2 + padding;
+		break;
+	case IVS_HALIGN_CENTER: 
+		x = screenWidth / 2;
+		break;
+	case IVS_HALIGN_RIGHT:
+		x = screenWidth - this->width / 2 - padding;
+		break;
+	}
+
+	switch (valign) {
+	case IVS_VALIGN_TOP: 
+		y = this->height / 2 + padding;
+		break;
+	case IVS_VALIGN_CENTER:
+		y = screenHeight / 2;
+		break;
+	case IVS_VALIGN_BOTTOM:
+		y = screenHeight - this->height / 2 - padding;
+		break;
+	}
+
+	body->update(x, y, width, height, config::uiSecondaryColor);	
+}
+
+void uiElement::update(int x, int y, int width, int height, glm::vec3 color)
+{
+	this->x = x;
+	this->y = y;
+	this->width = width;
+	this->height = height;
+	this->color = color;
 }

@@ -6,10 +6,11 @@
 
 #include <vector>
 
+#include "../ivsEngine.h"
+
 class uiElement {
-protected:
+public:
 	int x, y, width, height;
-	uiElement* parent;
 	glm::vec3 color;
 
 	friend class Render;
@@ -17,8 +18,10 @@ protected:
 	friend class Button;
 
 public:
-	uiElement(int x, int y, int width, int height, glm::vec3 color, uiElement* parent) 
-		: x(x), y(y), width(width), height(height), color(color), parent(parent) {}
+	uiElement(int x, int y, int width, int height, glm::vec3 color) 
+		: x(x), y(y), width(width), height(height), color(color) {}
+
+	void update(int x, int y, int width, int height, glm::vec3 color);
 };
 
 class uiComponent {
@@ -61,9 +64,42 @@ protected:
 	friend class Render;
 };
 
+class uiContainer {
+protected:
+	ui_h_align halign;
+	ui_v_align valign;
+	float widthFactor;
+	float heightFactor;
+	
+	int x = 0, y = 0;
+	unsigned int width = 0, height = 0;
+	int padding = 0;
+
+	uiContainer(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor)
+		: halign(halign), valign(valign), widthFactor(widthFactor), heightFactor(heightFactor) {}
+
+public:
+	virtual void update() = 0;
+};
+
+class Panel : public uiContainer {
+private:
+	uiElement* body;
+	bool isVisible;
+
+protected:
+	Panel(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor, bool isVisible);
+
+	void update() override;
+
+	friend class UserInterface;
+	friend class Render;
+};
+
 class UserInterface {
 private:
 	unsigned int VAO;
+	std::vector<uiContainer*> containerList;
 	std::vector<uiComponent*> componentList;
 	std::vector<uiElement*> elementList;
 
@@ -79,11 +115,15 @@ public:
 	static void init();
 	static void slider(int x, int y, int width, float& value, float min, float max, float step);
 	static void button(int x, int y, int width, int height, bool& value);
+	static void panel(ui_h_align halign, ui_v_align valign = IVS_VALIGN_CENTER, float widthFactor = config::uiWidthFactor, float heightFactor = config::uiHeightFactor);
+
 	static void addElement(uiElement* element);
-	static void addComponent(uiComponent* element);
+	static void addComponent(uiComponent* component);
+	static void addContainer(uiContainer* container);
 	
 	static std::vector<uiElement*> getElements();
 	static std::vector<uiComponent*> getComponents();
+	static std::vector<uiContainer*> getContainers();
 
 	static unsigned int getVAO();
 };
