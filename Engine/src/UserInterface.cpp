@@ -13,7 +13,6 @@ UserInterface& UserInterface::get()
 	static UserInterface instance;
 	return instance;
 }
-
 void UserInterface::init()
 {
 	float positions[] = { -0.5f, 0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
@@ -30,37 +29,6 @@ void UserInterface::init()
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 }
-
-void UserInterface::slider(int x, int y, int width, float& value, float min, float max, float step)
-{
-	addComponent(new Slider(x, y, width, value, min, max, step));
-}
-
-void UserInterface::button(int x, int y, int width, int height, bool& value)
-{
-	addComponent(new Button(x, y, width, height, value));
-}
-
-void UserInterface::panel(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor)
-{
-	addContainer(new Panel(halign, valign, widthFactor, heightFactor, true));
-}
-
-std::vector<uiElement*> UserInterface::getElements()
-{
-	return get().elementList;
-}
-
-std::vector<uiComponent*> UserInterface::getComponents()
-{
-	return get().componentList;
-}
-
-std::vector<uiContainer*> UserInterface::getContainers()
-{
-	return get().containerList;
-}
-
 unsigned int UserInterface::getVAO()
 {
 	return get().VAO;
@@ -70,16 +38,52 @@ void UserInterface::addElement(uiElement* element)
 {
 	get().elementList.emplace_back(element);
 }
-
 void UserInterface::addComponent(uiComponent* component)
 {
 	get().componentList.emplace_back(component);
 }
-
 void UserInterface::addContainer(uiContainer* container)
 {
 	get().containerList.emplace_back(container);
 }
+
+std::vector<uiElement*> UserInterface::getElements()
+{
+	return get().elementList;
+}
+std::vector<uiComponent*> UserInterface::getComponents()
+{
+	return get().componentList;
+}
+std::vector<uiContainer*> UserInterface::getContainers()
+{
+	return get().containerList;
+}
+
+
+void UserInterface::slider(int x, int y, int width, float& value, float min, float max, float step)
+{
+	addComponent(new Slider(x, y, width, value, min, max, step));
+}
+void UserInterface::button(int x, int y, int width, int height, bool& value)
+{
+	addComponent(new Button(x, y, width, height, value));
+}
+void UserInterface::panel(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor)
+{
+	addContainer(new Panel(halign, valign, widthFactor, heightFactor, true));
+}
+
+
+void uiElement::update(int x, int y, int width, int height, glm::vec4 color)
+{
+	this->x = x;
+	this->y = y;
+	this->width = width;
+	this->height = height;
+	this->color = color;
+}
+
 
 Slider::Slider(int x, int y, int width, float& value, float min, float max, float step)
 	: x(x), y(y), width(width), value(&value), state(false), min(min), max(max), step(step)
@@ -91,7 +95,6 @@ Slider::Slider(int x, int y, int width, float& value, float min, float max, floa
 	UserInterface::addElement(head);
 	UserInterface::addElement(body);
 }
-
 void Slider::update()
 {
 	if (Controller::isButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
@@ -129,7 +132,6 @@ Button::Button(int x, int y, int width, int height, bool& value)
 
 	UserInterface::addElement(body);
 }
-
 void Button::update()
 {
 	if (Controller::isButtonDown(GLFW_MOUSE_BUTTON_LEFT) && Controller::isMouseOver(body->x, body->y, body->width, body->height) && state == 0)
@@ -166,7 +168,6 @@ Panel::Panel(ui_h_align halign, ui_v_align valign, float widthFactor, float heig
 
 	UserInterface::addElement(body);
 }
-
 void Panel::update()
 {
 	int screenWidth, screenHeight;
@@ -203,13 +204,4 @@ void Panel::update()
 	}
 
 	body->update(x, y, width, height, config::uiSecondaryColor);
-}
-
-void uiElement::update(int x, int y, int width, int height, glm::vec4 color)
-{
-	this->x = x;
-	this->y = y;
-	this->width = width;
-	this->height = height;
-	this->color = color;
 }

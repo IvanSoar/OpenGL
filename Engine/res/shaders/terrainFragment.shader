@@ -6,5 +6,10 @@ in vec3 outPos;
 
 void main()
 {
-	fragColor = vec4(outColor.r, outColor.g * outPos.y , outColor.b, outColor.a);
+	if(outPos.y < 0.0)
+		fragColor = vec4(0.0, 0.0, 1.0, 1.0);
+	else if (outPos.y < 0.2)
+		fragColor = vec4(0.8, 0.8, 0.6, 1.0);
+	else if (outPos.y < 0.6)
+		fragColor = vec4(0.4, 0.8, 0.5, 1.0);
 }

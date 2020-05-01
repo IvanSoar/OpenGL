@@ -22,9 +22,6 @@ int main()
 	UserInterface::init();
 
 	UserInterface::panel(IVS_HALIGN_RIGHT);
-	UserInterface::panel(IVS_HALIGN_LEFT);
-	UserInterface::panel(IVS_HALIGN_CENTER, IVS_VALIGN_BOTTOM, 0.2f, 0.1f);
-	UserInterface::panel(IVS_HALIGN_CENTER, IVS_VALIGN_TOP, 0.2f, 0.1f);
 
 	UserInterface::slider(0, 0, 200, config::clearColor.r, 0, 1, 0.1f);
 	UserInterface::slider(0, 50, 200, config::clearColor.g, 0, 1, 0.1f);
@@ -34,19 +31,13 @@ int main()
 	float value = 0.0f;
 	UserInterface::slider(0, 200, 200, value, -0.3, 0.3, 0.1f);
 
-	float r, g, b;
-	UserInterface::slider(0, 250, 200, r, 0, 1, 0.1f);
-	UserInterface::slider(0, 300, 200, g, 0, 1, 0.1f);
-	UserInterface::slider(0, 350, 200, b, 0, 1, 0.1f);
-
-	UserInterface::slider(0, 400, 200, config::maxVertexperTerrain, 1, 1024, 10);
-	UserInterface::slider(0, 450, 200, config::terrainSize, 1, 1000, 10);
-
-	
-	Terrain::generate();
+	UserInterface::slider(0, 250, 200, config::maxVertexperTerrain, 1, 1024, 10);
+	UserInterface::slider(0, 300, 200, config::terrainSize, 1, 1000, 10);
 
 	bool generate = false;
-	UserInterface::button(0, 500, 200, 50, generate);
+	UserInterface::button(0, 350, 200, 50, generate);
+
+	Terrain::generate();
 
 	while (Display::isOpen()) {
 		Controller::processInputs();
@@ -59,7 +50,6 @@ int main()
 		}
 
 		model->rotate(value, value, value);
-		Terrain::changeColor(r, g, b, 1.0f);
 
 		Render::render();
 

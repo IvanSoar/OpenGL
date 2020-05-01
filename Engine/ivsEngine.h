@@ -60,8 +60,8 @@ public:
 	inline static	bool		vSync = true;
 	inline static	bool		cullFace = true;
 	inline static	bool		dephtest = true;
-	inline static	int			screenWidth = 1000;
-	inline static	int			screenHeight = 500;
+	inline static	int			screenWidth = 1600;
+	inline static	int			screenHeight = 900;
 	inline static	glm::vec4	clearColor = { 0.2f, 0.8f, 0.3f, 1.0f };
 	inline static	bool		renderMode = true;
 	inline static	float		cameraSpeed = 1.0f;
