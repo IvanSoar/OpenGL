@@ -35,7 +35,7 @@ void Render::renderModels()
 		}
 		else
 		{
-			projectionMatrix = glm::ortho(-config::hOrthoFactor * ratio, config::hOrthoFactor * ratio, (float)-config::hOrthoFactor, (float)config::hOrthoFactor, config::nearPlaneO, config::farPlaneO);
+			projectionMatrix = glm::ortho(-config::hOrthoFactor * ratio, config::hOrthoFactor * ratio, (float)-config::hOrthoFactor, (float)config::hOrthoFactor, config::nearPlaneP, config::farPlaneP);
 		}
 
 		modelMatrix = glm::translate(modelMatrix, model->position);
@@ -57,8 +57,9 @@ void Render::renderUi()
 
 	int width, height;
 	glfwGetFramebufferSize(Display::getWindow(), &width, &height);
+
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
-	projectionMatrix = glm::ortho(0.0f, (float)width, (float)height, 0.0f, 0.0f, 0.1f);
+	projectionMatrix = glm::ortho(0.0f, (float)width, (float)height, 0.0f, config::nearPlaneO, config::farPlaneO);
 	Shaders::setUniformM4(glGetUniformLocation(Shaders::getShaders()[1], "projection"), projectionMatrix);
 	
 	for (auto component : UserInterface::getComponents()) {
@@ -70,13 +71,12 @@ void Render::renderUi()
 	}
 
 	for (auto element : UserInterface::getElements()) {
-
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(element->x, element->y, 0.0f));
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(element->x, element->y, element->zLayer));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(element->width, element->height, 0.0f));
 
 		Shaders::setUniformM4(glGetUniformLocation(Shaders::getShaders()[1], "model"), modelMatrix);
-		Shaders::setUniform3f(glGetUniformLocation(Shaders::getShaders()[1], "color"), element->color);
+		Shaders::setUniform4f(glGetUniformLocation(Shaders::getShaders()[1], "color"), element->color);
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}

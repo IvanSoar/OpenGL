@@ -11,17 +11,18 @@
 class uiElement {
 public:
 	int x, y, width, height;
-	glm::vec3 color;
+	float zLayer;
+	glm::vec4 color;
 
 	friend class Render;
 	friend class Slider;
 	friend class Button;
 
 public:
-	uiElement(int x, int y, int width, int height, glm::vec3 color) 
-		: x(x), y(y), width(width), height(height), color(color) {}
+	uiElement(int x, int y, int width, int height, glm::vec4 color, float zLayer) 
+		: x(x), y(y), width(width), height(height), color(color), zLayer(zLayer) {}
 
-	void update(int x, int y, int width, int height, glm::vec3 color);
+	void update(int x, int y, int width, int height, glm::vec4 color);
 };
 
 class uiComponent {

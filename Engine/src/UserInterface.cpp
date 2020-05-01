@@ -84,8 +84,9 @@ void UserInterface::addContainer(uiContainer* container)
 Slider::Slider(int x, int y, int width, float& value, float min, float max, float step)
 	: x(x), y(y), width(width), value(&value), state(false), min(min), max(max), step(step)
 {
-	body = new uiElement(x + width / 2 + config::padding, y + width / 40 + config::padding, width, width / 20, config::uiColor);
-	head = new uiElement(body->x, body->y, body->height, body->height * 2, config::uiDetailColor);
+	body = new uiElement(x + width / 2 + config::padding, y + width / 40 + config::padding, width, width / 20, config::uiColor, -config::layer1);
+
+	head = new uiElement(body->x, body->y, body->height, body->height * 2, config::uiDetailColor, -config::layer2);
 
 	UserInterface::addElement(head);
 	UserInterface::addElement(body);
@@ -124,7 +125,7 @@ void Slider::update()
 Button::Button(int x, int y, int width, int height, bool& value)
 	: x(x), y(y), width(width), height(height), value(&value)
 {
-	body = new uiElement(x + width / 2 + config::padding, y + height / 2 + config::padding, width, height, config::uiColor);
+	body = new uiElement(x + width / 2 + config::padding, y + height / 2 + config::padding, width, height, config::uiColor, -config::layer1);
 
 	UserInterface::addElement(body);
 }
@@ -159,7 +160,7 @@ Panel::Panel(ui_h_align halign, ui_v_align valign, float widthFactor, float heig
 {
 	padding = config::padding;
 	
-	body = new uiElement(0, 0, 0, 0, glm::vec3(0));
+	body = new uiElement(0, 0, 0, 0, config::uiSecondaryColor, -config::layer0);
 
 	update();
 
@@ -201,10 +202,10 @@ void Panel::update()
 		break;
 	}
 
-	body->update(x, y, width, height, config::uiSecondaryColor);	
+	body->update(x, y, width, height, config::uiSecondaryColor);
 }
 
-void uiElement::update(int x, int y, int width, int height, glm::vec3 color)
+void uiElement::update(int x, int y, int width, int height, glm::vec4 color)
 {
 	this->x = x;
 	this->y = y;

@@ -32,11 +32,9 @@ void Display::init()
 	ivs::log("Initiating GLAD", gladLoadGLLoader((GLADloadproc)glfwGetProcAddress));
 
 	glfwSwapInterval(config::vSync);
-
-	if (config::dephtest)
-		glEnable(GL_DEPTH_TEST);
-	else
-		glDisable(GL_DEPTH_TEST);
+	
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 
 	if (config::cullFace) {
 		glEnable(GL_CULL_FACE);

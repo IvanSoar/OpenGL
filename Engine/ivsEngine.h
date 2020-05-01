@@ -52,10 +52,10 @@ namespace ivs {
 class config {
 public:
 	inline static	float		fov = 55.0f;
-	inline static	float		nearPlaneP = 0.1f;
-	inline static	float		farPlaneP = 1000.0f;
-	inline static	float		nearPlaneO = 0.1f;
-	inline static	float		farPlaneO = 0.2f;
+	inline static	float		nearPlaneO = 0.0f;
+	inline static	float		farPlaneO = 0.04f;
+	inline static	float		nearPlaneP = 0.05f;
+	inline static	float		farPlaneP = 100.0f;
 	inline static	int			hOrthoFactor = 10;
 	inline static	bool		vSync = true;
 	inline static	bool		cullFace = true;
@@ -68,7 +68,7 @@ public:
 	inline static	glm::vec3	cameraPos = { 0.0f, 1.0f, 3.0f };
 	inline static	glm::vec3	cameraFront = { 0.0f, 0.0f, -1.0f };
 	inline static	glm::vec3	cameraUp = { 0.0f, 1.0f, 0.0f };
-	inline static	glm::vec4	uiColor = { 1.0f, 0.5f, 0.0f, 1.0f };
+	inline static	glm::vec4	uiColor = { 1.0f, 0.5f, 0.1f, 1.0f };
 	inline static	glm::vec4	uiSecondaryColor = uiColor * 0.3f;
 	inline static	glm::vec4	uiDetailColor = uiColor * 0.5f;
 	inline static	int			padding = 10;
@@ -76,4 +76,7 @@ public:
 	inline static	float		terrainSize  = 10;
 	inline static	float		uiWidthFactor = 0.3f;
 	inline static	float		uiHeightFactor = 1.0f;
+	inline static	float		layer0 = 0.03f;
+	inline static	float		layer1 = 0.02f;
+	inline static	float		layer2 = 0.01f;
 };
