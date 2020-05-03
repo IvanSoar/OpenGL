@@ -34,13 +34,9 @@ void Display::init()
 	glfwSwapInterval(config::vSync);
 	
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-
-	if (config::cullFace) {
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CCW);
-	}
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 }
 
 bool Display::isOpen()
@@ -50,6 +46,8 @@ bool Display::isOpen()
 
 void Display::prepare()
 {
+	config::uiSecondaryColor = { config::uiColor.r * 0.3f, config::uiColor.g * 0.3f, config::uiColor.b * 0.3f, 1.0f };
+	config::uiDetailColor = config::uiDetailColor = { config::uiColor.r * 0.6f, config::uiColor.g * 0.6f, config::uiColor.b * 0.6f, 1.0f };;
 	glClearColor(config::clearColor.r, config::clearColor.g, config::clearColor.b, config::clearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

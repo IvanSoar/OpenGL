@@ -53,6 +53,9 @@ void Render::renderModels()
 
 void Render::renderUi()
 {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glBindVertexArray(UserInterface::getVAO());
 
 	int width, height;
@@ -115,12 +118,12 @@ void Render::renderTerrain()
 
 void Render::render()
 {
+Shaders::activate(2);
+	renderTerrain();
+
 	Shaders::activate(0);
 	renderModels();
 
 	Shaders::activate(1);
 	renderUi();
-
-	Shaders::activate(2);
-	renderTerrain();
 }
