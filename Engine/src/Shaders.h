@@ -35,6 +35,7 @@ public:
 	static void setUniformM4(int location, glm::mat4 value);
 	static void setUniform3f(int location, glm::vec3 value);
 	static void setUniform4f(int location, glm::vec4 value);
+	static void setUniform1i(int location, int value);
 
 	static void terminate();
 };

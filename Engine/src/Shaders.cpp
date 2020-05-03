@@ -121,6 +121,11 @@ void Shaders::setUniform4f(int location, glm::vec4 value)
 	glUniform4fv(location, 1, &value[0]);
 }
 
+void Shaders::setUniform1i(int location, int value)
+{
+	glUniform1i(location, value);
+}
+
 void Shaders::terminate()
 {
 	for (auto program : get().shaderProgramList)

@@ -14,6 +14,7 @@ int main()
 	Shaders::addShaders("res/shaders/vertex.shader", "res/shaders/fragment.shader");
 	Shaders::addShaders("res/shaders/guiVertex.shader", "res/shaders/guiFragment.shader");
 	Shaders::addShaders("res/shaders/terrainVertex.shader", "res/shaders/terrainFragment.shader");
+	Shaders::addShaders("res/shaders/textVertex.shader", "res/shaders/textFragment.shader");
 
 	Model* model = Models::addObjModel("res/models/cube.model");
 	model->setPosition(0, 1, 0);
