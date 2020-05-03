@@ -21,21 +21,29 @@ int main()
 	Controller::init();
 	UserInterface::init();
 
-	UserInterface::panel(IVS_HALIGN_RIGHT);
+	UserInterface::panel(IVS_HALIGN_RIGHT, IVS_VALIGN_BOTTOM, 0.2f, 0.4f);
 
-	UserInterface::slider(0, 0, 200, config::clearColor.r, 0, 1, 0.1f);
-	UserInterface::slider(0, 50, 200, config::clearColor.g, 0, 1, 0.1f);
-	UserInterface::slider(0, 100, 200, config::clearColor.b, 0, 1, 0.1f);
-	UserInterface::slider(0, 150, 200, config::cameraSpeed, 0.1, 3.0, 0.1f);
+	UserInterface::slider(config::clearColor.r, 0.0f, 1.0f, 0.1f);
+	UserInterface::slider(config::clearColor.g, 0.0f, 1.0f, 0.1f);
+	UserInterface::slider(config::clearColor.b, 0.0f, 1.0f, 0.1f);
+
+	UserInterface::slider(config::uiColor.r, 0.0f, 1.0f, 0.1f);
+	UserInterface::slider(config::uiColor.g, 0.0f, 1.0f, 0.1f);
+	UserInterface::slider(config::uiColor.b, 0.0f, 1.0f, 0.1f);
+	UserInterface::slider(config::uiSecondaryColor.a, 0.0f, 1.0f, 0.1f);
+
+	UserInterface::panel(IVS_HALIGN_LEFT);
+
+	UserInterface::slider(config::cameraSpeed , 0.1f, 3.0f, 0.1f);
 	
 	float value = 0.0f;
-	UserInterface::slider(0, 200, 200, value, -0.3, 0.3, 0.1f);
+	UserInterface::slider(value, -0.3f, 0.3f, 0.1f);
 
-	UserInterface::slider(0, 250, 200, config::maxVertexperTerrain, 1, 1024, 10);
-	UserInterface::slider(0, 300, 200, config::terrainSize, 1, 1000, 10);
+	UserInterface::slider(config::maxVertexperTerrain, 1.0f, 1024.0f, 10.0f);
+	UserInterface::slider(config::terrainSize, 1.0f, 1000.0f, 10.0f);
 
 	bool generate = false;
-	UserInterface::button(0, 350, 200, 50, generate);
+	UserInterface::button(generate);
 
 	Terrain::generate();
 

@@ -58,8 +58,6 @@ public:
 	inline static	float		farPlaneP = 100.0f;
 	inline static	int			hOrthoFactor = 10;
 	inline static	bool		vSync = true;
-	inline static	bool		cullFace = true;
-	inline static	bool		dephtest = true;
 	inline static	int			screenWidth = 1600;
 	inline static	int			screenHeight = 900;
 	inline static	glm::vec4	clearColor = { 0.2f, 0.8f, 0.3f, 1.0f };
@@ -68,13 +66,13 @@ public:
 	inline static	glm::vec3	cameraPos = { 0.0f, 1.0f, 3.0f };
 	inline static	glm::vec3	cameraFront = { 0.0f, 0.0f, -1.0f };
 	inline static	glm::vec3	cameraUp = { 0.0f, 1.0f, 0.0f };
-	inline static	glm::vec4	uiColor = { 1.0f, 0.5f, 0.1f, 1.0f };
-	inline static	glm::vec4	uiSecondaryColor = uiColor * 0.3f;
-	inline static	glm::vec4	uiDetailColor = uiColor * 0.5f;
+	inline static	glm::vec4	uiColor = { 0.4f, 0.4f, 0.8f, 1.0f };
+	inline static	glm::vec4	uiSecondaryColor = { uiColor.r * 0.3f, uiColor.g * 0.3f, uiColor.b * 0.3f, 1.0f };
+	inline static	glm::vec4	uiDetailColor = { uiColor.r * 0.6f, uiColor.g * 0.6f, uiColor.b * 0.6f, 1.0f };
 	inline static	int			padding = 10;
 	inline static	float		maxVertexperTerrain = 10;
 	inline static	float		terrainSize  = 10;
-	inline static	float		uiWidthFactor = 0.3f;
+	inline static	float		uiWidthFactor = 0.2f;
 	inline static	float		uiHeightFactor = 1.0f;
 	inline static	float		layer0 = 0.03f;
 	inline static	float		layer1 = 0.02f;

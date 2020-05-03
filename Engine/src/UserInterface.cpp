@@ -61,13 +61,27 @@ std::vector<uiContainer*> UserInterface::getContainers()
 }
 
 
-void UserInterface::slider(int x, int y, int width, float& value, float min, float max, float step)
+void UserInterface::slider(float& value, float min, float max, float step)
 {
-	addComponent(new Slider(x, y, width, value, min, max, step));
+	
+	auto container = get().containerList.back();
+	int x = container->x - container->width / 2;
+	int width = container->width - 2 * config::padding;
+	int y = container->y - container->height / 2 + config::padding + container->componenteCount * 30;
+
+	container->componenteCount++;
+	addComponent(new Slider(x, y, width, value, min, max, step, *container));
 }
-void UserInterface::button(int x, int y, int width, int height, bool& value)
+void UserInterface::button(bool& value)
 {
-	addComponent(new Button(x, y, width, height, value));
+	auto container = get().containerList.back();
+	int width = container->width / 2;
+	int height = width / 4;
+	int x = container->x + container->width / 2 - width - config::padding;
+	int y = container->y + container->height / 2 - height - config::padding;
+
+	container->componenteCount++;
+	addComponent(new Button(x, y, width, height, value, *container));
 }
 void UserInterface::panel(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor)
 {
@@ -85,18 +99,25 @@ void uiElement::update(int x, int y, int width, int height, glm::vec4 color)
 }
 
 
-Slider::Slider(int x, int y, int width, float& value, float min, float max, float step)
-	: x(x), y(y), width(width), value(&value), state(false), min(min), max(max), step(step)
+Slider::Slider(int x, int y, int width, float& value, float min, float max, float step, uiContainer& container)
+	: x(x), y(y), width(width), value(&value), state(false), min(min), max(max), step(step), container(container)
 {
-	body = new uiElement(x + width / 2 + config::padding, y + width / 40 + config::padding, width, width / 20, config::uiColor, -config::layer1);
+	body = new uiElement(x + width / 2, y + width / 40, width, width / 20, config::uiColor, -config::layer1);
 
-	head = new uiElement(body->x, body->y, body->height, body->height * 2, config::uiDetailColor, -config::layer2);
+	head = new uiElement(body->x, body->y, body->height, body->height, config::uiDetailColor, -config::layer2);
 
 	UserInterface::addElement(head);
 	UserInterface::addElement(body);
 }
 void Slider::update()
 {
+	body->width = container.width - config::padding * 2;
+	body->x = container.x;
+	body->y = body->y;
+
+	body->color = config::uiColor;
+	head->color = config::uiDetailColor;
+
 	if (Controller::isButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
 		if (Controller::isMouseOver(head->x, head->y, head->width, head->height) ||
 			Controller::isMouseOver(body->x, body->y, body->width, body->height)) {
@@ -119,26 +140,34 @@ void Slider::update()
 	if (state)
 		head->x = (int)mouseX;
 
-	head->x = head->x > body->x + body->width / 2 ? body->x + body->width / 2 : head->x;
-	head->x = head->x < body->x - body->width / 2 ? body->x - body->width / 2 : head->x;
+	head->x = head->x > body->x + body->width / 2 - body->height / 2 ? body->x + body->width / 2 - body->height / 2 : head->x;
+	head->x = head->x < body->x - body->width / 2 + body->height / 2 ? body->x - body->width / 2 + body->height / 2 : head->x;
 
-	*value = ivs::map((float)body->x - body->width / 2, (float)body->x + body->width / 2, (float)min, (float)max, (float)head->x);
+	*value = ivs::map((float)body->x - body->width / 2 + head->width / 2, (float)body->x + body->width / 2 - head->width / 2, (float)min, (float)max, (float)head->x);
 }
 
-Button::Button(int x, int y, int width, int height, bool& value)
-	: x(x), y(y), width(width), height(height), value(&value)
+Button::Button(int x, int y, int width, int height, bool& value, uiContainer& container)
+	: x(x), y(y), width(width), height(height), value(&value), container(container)
 {
-	body = new uiElement(x + width / 2 + config::padding, y + height / 2 + config::padding, width, height, config::uiColor, -config::layer1);
+	body = new uiElement(x + width / 2, y + height / 2, width, height, config::uiColor, -config::layer1);
 
 	UserInterface::addElement(body);
 }
 void Button::update()
 {
+	body->x = container.x;
+	body->y = body->y;
+
+	body->color = config::uiColor;
+
+	body->width = container.width / 2;
+	body->height = width / 4;
+	body->x = container.x;
+	body->y = container.y + container.height / 2 - body->height - config::padding;
+
 	if (Controller::isButtonDown(GLFW_MOUSE_BUTTON_LEFT) && Controller::isMouseOver(body->x, body->y, body->width, body->height) && state == 0)
 	{
-		ivs::log("clicked");
 		*value = *value ? false : true;
-		ivs::log(*value);
 		state++;
 
 		body->x += 2;

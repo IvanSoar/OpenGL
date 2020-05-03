@@ -30,6 +30,25 @@ public:
 	virtual void update() = 0;
 };
 
+class uiContainer {
+public:
+	ui_h_align halign;
+	ui_v_align valign;
+	float widthFactor;
+	float heightFactor;
+	int componenteCount = 0;
+	
+	int x = 0, y = 0;
+	unsigned int width = 0, height = 0;
+	int padding = 0;
+
+	uiContainer(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor)
+		: halign(halign), valign(valign), widthFactor(widthFactor), heightFactor(heightFactor) {}
+
+public:
+	virtual void update() = 0;
+};
+
 class Slider : uiComponent {
 private:
 	int x, y, width;
@@ -39,9 +58,10 @@ private:
 	float* value;
 	float min, max;
 	float step;
+	uiContainer& container;
 
 protected:
-	Slider(int x, int y, int width, float& value, float min, float max, float step);
+	Slider(int x, int y, int width, float& value, float min, float max, float step, uiContainer& container);
 	
 	void update() override;
 	
@@ -55,32 +75,15 @@ private:
 	uiElement* body;
 	bool* value;
 	int state = 0;
+	uiContainer& container;
 
 protected:
-	Button(int x, int y, int width, int height, bool& value);
+	Button(int x, int y, int width, int height, bool& value, uiContainer& container);
 
 	void update() override;
 
 	friend class UserInterface;
 	friend class Render;
-};
-
-class uiContainer {
-protected:
-	ui_h_align halign;
-	ui_v_align valign;
-	float widthFactor;
-	float heightFactor;
-	
-	int x = 0, y = 0;
-	unsigned int width = 0, height = 0;
-	int padding = 0;
-
-	uiContainer(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor)
-		: halign(halign), valign(valign), widthFactor(widthFactor), heightFactor(heightFactor) {}
-
-public:
-	virtual void update() = 0;
 };
 
 class Panel : public uiContainer {
@@ -114,8 +117,8 @@ protected:
 
 public:
 	static void init();
-	static void slider(int x, int y, int width, float& value, float min, float max, float step);
-	static void button(int x, int y, int width, int height, bool& value);
+	static void slider(float& value, float min, float max, float step);
+	static void button(bool& value);
 	static void panel(ui_h_align halign, ui_v_align valign = IVS_VALIGN_CENTER, float widthFactor = config::uiWidthFactor, float heightFactor = config::uiHeightFactor);
 
 	static void addElement(uiElement* element);
