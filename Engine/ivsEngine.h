@@ -77,4 +77,7 @@ public:
 	inline static	float		layer0 = 0.03f;
 	inline static	float		layer1 = 0.02f;
 	inline static	float		layer2 = 0.01f;
+	inline static	float		textWidth = 0.5f;
+	inline static	float		textEdge = 0.1f;
+	inline static	glm::vec3	textColor = { 0.0f, 0.0f, 0.0f };
 };

@@ -36,6 +36,7 @@ public:
 	static void setUniform3f(int location, glm::vec3 value);
 	static void setUniform4f(int location, glm::vec4 value);
 	static void setUniform1i(int location, int value);
+	static void setUniform1f(int location, float value);
 
 	static void terminate();
 };

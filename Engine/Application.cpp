@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Controller.h"
 #include "Terrain.h"
+#include "Text.h"
 #include "UserInterface.h"
 
 int main()
@@ -22,7 +23,7 @@ int main()
 	Controller::init();
 	UserInterface::init();
 
-	UserInterface::panel(IVS_HALIGN_RIGHT, IVS_VALIGN_BOTTOM, 0.2f, 0.4f);
+	UserInterface::panel(IVS_HALIGN_LEFT);
 
 	UserInterface::slider(config::clearColor.r, 0.0f, 1.0f, 0.1f);
 	UserInterface::slider(config::clearColor.g, 0.0f, 1.0f, 0.1f);
@@ -32,11 +33,8 @@ int main()
 	UserInterface::slider(config::uiColor.g, 0.0f, 1.0f, 0.1f);
 	UserInterface::slider(config::uiColor.b, 0.0f, 1.0f, 0.1f);
 	UserInterface::slider(config::uiSecondaryColor.a, 0.0f, 1.0f, 0.1f);
+	UserInterface::slider(config::cameraSpeed, 0.1f, 3.0f, 0.1f);
 
-	UserInterface::panel(IVS_HALIGN_LEFT);
-
-	UserInterface::slider(config::cameraSpeed , 0.1f, 3.0f, 0.1f);
-	
 	float value = 0.0f;
 	UserInterface::slider(value, -0.3f, 0.3f, 0.1f);
 
@@ -47,6 +45,16 @@ int main()
 	UserInterface::button(generate);
 
 	Terrain::generate();
+	
+	Text::loadFont("Candara");
+	Text::addText("Ivanilton");
+
+	UserInterface::panel(IVS_HALIGN_RIGHT);
+	UserInterface::slider(config::textColor.r, 0.0f, 1.0f, 0.1f);
+	UserInterface::slider(config::textColor.g, 0.0f, 1.0f, 0.1f);
+	UserInterface::slider(config::textColor.b, 0.0f, 1.0f, 0.1f);
+	UserInterface::slider(config::textWidth, 0.3f, 0.5f, 0.1f);
+	UserInterface::slider(config::textEdge, 0.3f, 0.01f, 0.1f);
 
 	while (Display::isOpen()) {
 		Controller::processInputs();

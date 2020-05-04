@@ -10,6 +10,7 @@
 #include "Models.h"
 #include "Shaders.h"
 #include "Terrain.h"
+#include "Text.h"
 #include "UserInterface.h"
 
 Render& Render::get()
@@ -118,7 +119,7 @@ void Render::renderTerrain()
 
 void Render::render()
 {
-Shaders::activate(2);
+	Shaders::activate(2);
 	renderTerrain();
 
 	Shaders::activate(0);
@@ -126,4 +127,7 @@ Shaders::activate(2);
 
 	Shaders::activate(1);
 	renderUi();
+
+	Shaders::activate(3);
+	Text::render();
 }
