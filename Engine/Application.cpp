@@ -46,8 +46,8 @@ int main()
 
 	Terrain::generate();
 	
-	Text::loadFont("Candara");
-	Text::addText("Ivanilton");
+	Text::loadFont("CalibriASCII");
+	Text::addText("O Ivan é lindo e gostoso!!", -0.5f, 0);
 
 	UserInterface::panel(IVS_HALIGN_RIGHT);
 	UserInterface::slider(config::textColor.r, 0.0f, 1.0f, 0.1f);

@@ -1,10 +1,12 @@
 #include "glad/glad.h"
+#include "GLFW/glfw3.h"
 #include "stb_image/stb_image.h"
 
 #include <fstream>
 #include <string>
 
 #include "Text.h"
+#include "Display.h"
 #include "Shaders.h"
 #include "../ivsEngine.h"
 
@@ -40,6 +42,11 @@ void Text::createVAO()
 
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, instance.index.size() * sizeof(unsigned int), instance.index.data(), GL_STATIC_DRAW);
 }
 
 void Text::render()
@@ -53,8 +60,8 @@ void Text::render()
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, get().textureID);
-	
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, get().vertex.size() / 4);
+
+	glDrawElements(GL_TRIANGLES, get().index.size(), GL_UNSIGNED_INT, 0);
 
 }
 
@@ -102,11 +109,18 @@ void Text::loadFontFile(const std::string& filepath)
 	file.close();
 }
 
-void Text::addText(const std::string& text)
+void Text::addText(const std::string& text, float x, float y)
 {
-	float cursor = -0.5f;
+	float cursorX = x;
+	float cursorY = y;
 	auto& vertex = get().vertex;
+	auto& index = get().index;
 
+	int scrWidth, scrHeight;
+	glfwGetFramebufferSize(Display::getWindow(), &scrWidth, &scrHeight);
+	float aspectRatio = (float) scrWidth / (float) scrHeight;
+
+	int iterator = 0;
 	for (auto character : text) {
 		float charWidth = get().characters[character]->width / (float)get().textureWidth;
 		float charHeight = get().characters[character]->height / (float)get().textureHeight;
@@ -117,27 +131,39 @@ void Text::addText(const std::string& text)
 		float y1 = 1 - (float)get().characters[character]->y / (float)get().textureHeight;
 		float y2 = y1 - charHeight;
 
-		vertex.push_back(cursor);
-		vertex.push_back(charHeight);
+		float xoffset = (float)get().characters[character]->xoffset / (float)get().textureWidth;
+		float yoffset = (float)get().characters[character]->yoffset / (float)get().textureHeight;
+
+		vertex.push_back(cursorX / aspectRatio);
+		vertex.push_back(cursorY - yoffset);
 		vertex.push_back(x1);
 		vertex.push_back(y1);
 
-		vertex.push_back(cursor);
-		vertex.push_back(0);
+		vertex.push_back(cursorX / aspectRatio);
+		vertex.push_back(cursorY - charHeight - yoffset);
 		vertex.push_back(x1);
 		vertex.push_back(y2);
 
-		vertex.push_back(cursor + charWidth);
-		vertex.push_back(charHeight);
-		vertex.push_back(x2);
-		vertex.push_back(y1);
-
-		vertex.push_back(cursor + charWidth);
-		vertex.push_back(0);
+		vertex.push_back((cursorX + charWidth) / aspectRatio);
+		vertex.push_back(cursorY - charHeight - yoffset);
 		vertex.push_back(x2);
 		vertex.push_back(y2);
 
-		cursor += (float)get().characters[character]->xadvance / (float)get().textureWidth;
+		vertex.push_back((cursorX + charWidth) / aspectRatio);
+		vertex.push_back(cursorY - yoffset);
+		vertex.push_back(x2);
+		vertex.push_back(y1);
+
+		index.push_back(iterator * 4 + 0);
+		index.push_back(iterator * 4 + 1);
+		index.push_back(iterator * 4 + 2);
+
+		index.push_back(iterator * 4 + 2);
+		index.push_back(iterator * 4 + 3);
+		index.push_back(iterator * 4 + 0);
+
+		cursorX += (float)get().characters[character]->xadvance / (float)get().textureWidth + xoffset;
+		iterator++;
 	}
 
 	createVAO();

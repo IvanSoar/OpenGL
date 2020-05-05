@@ -18,6 +18,7 @@ private:
 	int x, y, width, height;
 	std::map<char, CharacterData*> characters;
 	std::vector<float> vertex;
+	std::vector<unsigned int> index;
 
 	unsigned int textureID;
 	unsigned char* textureBuffer;
@@ -33,5 +34,5 @@ public:
 	static void render();
 	static void loadTexture(const std::string& filepath);
 	static void loadFontFile(const std::string& filepath);
-	static void addText(const std::string& text);
+	static void addText(const std::string& text, float x, float y);
 };
