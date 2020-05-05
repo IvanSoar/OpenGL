@@ -29,7 +29,7 @@ enum class ui_v_align : unsigned char
 
 namespace ivs {
 	template<typename type>
-	void log(type msg, int value = 2)
+	void log(const type msg, int value = 2)
 	{
 		switch (value) {
 		case 0: std::cout << IVS_LOG_STAMP << msg << IVS_FAILURE << std::endl; break;

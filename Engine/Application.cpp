@@ -46,7 +46,7 @@ int main()
 
 	Terrain::generate();
 	
-	Text::loadFont("CalibriASCII");
+	Text::loadFont("CandaraASCII");
 	Text::addText("O Ivan é lindo e gostoso!!", -0.5f, 0);
 
 	UserInterface::panel(IVS_HALIGN_RIGHT);
@@ -55,6 +55,11 @@ int main()
 	UserInterface::slider(config::textColor.b, 0.0f, 1.0f, 0.1f);
 	UserInterface::slider(config::textWidth, 0.3f, 0.5f, 0.1f);
 	UserInterface::slider(config::textEdge, 0.3f, 0.01f, 0.1f);
+
+	std::string nome = "Ivan ";
+	std::string sobrenome = "Ivan ";
+
+	ivs::log(nome + sobrenome);
 
 	while (Display::isOpen()) {
 		Controller::processInputs();
