@@ -10,82 +10,169 @@
 #include "Shaders.h"
 #include "../ivsEngine.h"
 
-Text& Text::get()
+void Text::updateIndex()
 {
-	static Text instance;
-	return instance;
+	indices.clear();
+	for (unsigned int iterator = 0; iterator < textString.size(); iterator++) {
+		indices.push_back(iterator * 4 + 0);
+		indices.push_back(iterator * 4 + 1);
+		indices.push_back(iterator * 4 + 2);
+
+		indices.push_back(iterator * 4 + 2);
+		indices.push_back(iterator * 4 + 3);
+		indices.push_back(iterator * 4 + 0);
+	}
 }
 
-void Text::loadFont(const std::string& fontName)
+void Text::updateVertex()
 {
-	loadTexture("res/fonts/" + fontName + ".png");
-	loadFontFile("res/fonts/" + fontName + ".fnt");
+	vertices.clear();
 
-	Shaders::activate(3);
-	Shaders::setUniform1i(glGetUniformLocation(Shaders::getShaders()[3], "u_Texture"), 0);
+	float cursorX = x;
+	float cursorY = y;
+	float size = 0;
+
+	bool flag = false;
+	for (auto character : textString) {
+		float charWidth = (float)TextHandler::characters[character].width / (float)TextHandler::textureWidth;
+		float charHeight = (float)TextHandler::characters[character].height / (float)TextHandler::textureHeight;
+
+		float x1 = (float)TextHandler::characters[character].x / (float)TextHandler::textureWidth;
+		float x2 = x1 + charWidth;
+
+		float y1 = 1 - (float)TextHandler::characters[character].y / (float)TextHandler::textureHeight;
+		float y2 = y1 - charHeight;
+
+		float xoffset = (float)TextHandler::characters[character].xoffset / (float)TextHandler::textureWidth;
+		float yoffset = (float)TextHandler::characters[character].yoffset / (float)TextHandler::textureHeight;
+
+		vertices.push_back(cursorX);
+		vertices.push_back(cursorY - yoffset);
+		vertices.push_back(x1);
+		vertices.push_back(y1);
+
+		vertices.push_back(cursorX);
+		vertices.push_back(cursorY - charHeight - yoffset);
+		vertices.push_back(x1);
+		vertices.push_back(y2);
+
+		vertices.push_back((cursorX + charWidth));
+		vertices.push_back(cursorY - charHeight - yoffset);
+		vertices.push_back(x2);
+		vertices.push_back(y2);
+
+		vertices.push_back((cursorX + charWidth));
+		vertices.push_back(cursorY - yoffset);
+		vertices.push_back(x2);
+		vertices.push_back(y1);
+
+		size += ((float)TextHandler::characters[character].xadvance / (float)TextHandler::textureWidth) + xoffset;
+		flag = size >= lineWidth ? true : flag;
+
+		cursorX += ((float)TextHandler::characters[character].xadvance / (float)TextHandler::textureWidth) + xoffset;
+		if (flag && character == ' ') {
+			cursorX = x;
+			cursorY -= 0.1f;
+			flag = false;
+			size = 0;
+		}
+	}
 }
 
 void Text::createVAO()
 {
-	auto& instance = get();
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-	glGenVertexArrays(1, &instance.vao);
-	glBindVertexArray(instance.vao);
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, instance.vertex.size() * sizeof(float), instance.vertex.data(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, sizeof(vertex::positions) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, positions));
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glVertexAttribPointer(1, sizeof(vertex::textureCoords) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, textureCoords));
 	glEnableVertexAttribArray(1);
-
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, instance.index.size() * sizeof(unsigned int), instance.index.data(), GL_STATIC_DRAW);
 }
 
-void Text::render()
+void Text::updateDynamicData()
 {
-	Shaders::activate(3);
-	Shaders::setUniform3f(glGetUniformLocation(Shaders::getShaders()[3], "textColor"), config::textColor);
-	Shaders::setUniform1f(glGetUniformLocation(Shaders::getShaders()[3], "width"), config::textWidth);
-	Shaders::setUniform1f(glGetUniformLocation(Shaders::getShaders()[3], "edge"), config::textEdge);
+	updateIndex();
+	updateVertex();
 
-	glBindVertexArray(get().vao);
+	glBindVertexArray(vao);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, get().textureID);
-
-	glDrawElements(GL_TRIANGLES, get().index.size(), GL_UNSIGNED_INT, 0);
-
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indices.size() * sizeof(unsigned int), indices.data());
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float), vertices.data());
 }
 
-void Text::loadTexture(const std::string& filepath)
+void Text::createDynamicVAO()
+{
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, config::maxQuads * 4 * sizeof(vertex), nullptr, GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, config::maxQuads * 6 * sizeof(unsigned int), nullptr, GL_DYNAMIC_DRAW);
+
+	glVertexAttribPointer(0, sizeof(vertex::positions) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, positions));
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, sizeof(vertex::textureCoords) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, textureCoords));
+	glEnableVertexAttribArray(1);
+}
+
+
+unsigned int TextHandler::add(const std::string& text, float x, float y, float lineWidth)
+{
+	Text* instance = new Text(text, x, y, lineWidth);
+	
+	instance->createDynamicVAO();
+	instance->updateDynamicData();
+	
+	unsigned int id = texts.size();
+	texts[id] = instance;
+	return id;
+}
+
+std::string& TextHandler::getText(unsigned int textId)
+{
+	return texts[textId]->textString;
+}
+
+
+void TextHandler::loadTexture(const std::string& filepath)
 {
 	stbi_set_flip_vertically_on_load(1);
-	get().textureBuffer = stbi_load(filepath.c_str(), &get().textureWidth, &get().textureHeight, &get().textureBPP, 4);
+	textureBuffer = stbi_load(filepath.c_str(), &textureWidth, &textureHeight, &textureBPP, 4);
 
-	glGenTextures(1, &get().textureID);
-	glBindTexture(GL_TEXTURE_2D, get().textureID);
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, get().textureWidth, get().textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, get().textureBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void Text::loadFontFile(const std::string& filepath)
+void TextHandler::loadFontFile(const std::string& filepath)
 {
 	std::ifstream file(filepath, std::ifstream::in);
 	std::string line;
@@ -103,68 +190,14 @@ void Text::loadFontFile(const std::string& filepath)
 			yoffset = stoi(line.substr(line.find("yoffset=") + 8, line.find(' ')));
 			xadvance = stoi(line.substr(line.find("xadvance=") + 9, line.find(' ')));
 
-			get().characters[id] = new CharacterData(x, y, width, height, xoffset, yoffset, xadvance);
+			characters[id] = { x, y, width, height, xoffset, yoffset, xadvance };
 		}
 	}
 	file.close();
 }
 
-void Text::addText(const std::string& text, float x, float y)
+void TextHandler::loadFont(const std::string& fontName)
 {
-	float cursorX = x;
-	float cursorY = y;
-	auto& vertex = get().vertex;
-	auto& index = get().index;
-
-	int scrWidth, scrHeight;
-	glfwGetFramebufferSize(Display::getWindow(), &scrWidth, &scrHeight);
-	float aspectRatio = (float) scrWidth / (float) scrHeight;
-
-	int iterator = 0;
-	for (auto character : text) {
-		float charWidth = get().characters[character]->width / (float)get().textureWidth;
-		float charHeight = get().characters[character]->height / (float)get().textureHeight;
-
-		float x1 = (float)get().characters[character]->x / (float)get().textureWidth;
-		float x2 = x1 + charWidth;
-
-		float y1 = 1 - (float)get().characters[character]->y / (float)get().textureHeight;
-		float y2 = y1 - charHeight;
-
-		float xoffset = (float)get().characters[character]->xoffset / (float)get().textureWidth;
-		float yoffset = (float)get().characters[character]->yoffset / (float)get().textureHeight;
-
-		vertex.push_back(cursorX / aspectRatio);
-		vertex.push_back(cursorY - yoffset);
-		vertex.push_back(x1);
-		vertex.push_back(y1);
-
-		vertex.push_back(cursorX / aspectRatio);
-		vertex.push_back(cursorY - charHeight - yoffset);
-		vertex.push_back(x1);
-		vertex.push_back(y2);
-
-		vertex.push_back((cursorX + charWidth) / aspectRatio);
-		vertex.push_back(cursorY - charHeight - yoffset);
-		vertex.push_back(x2);
-		vertex.push_back(y2);
-
-		vertex.push_back((cursorX + charWidth) / aspectRatio);
-		vertex.push_back(cursorY - yoffset);
-		vertex.push_back(x2);
-		vertex.push_back(y1);
-
-		index.push_back(iterator * 4 + 0);
-		index.push_back(iterator * 4 + 1);
-		index.push_back(iterator * 4 + 2);
-
-		index.push_back(iterator * 4 + 2);
-		index.push_back(iterator * 4 + 3);
-		index.push_back(iterator * 4 + 0);
-
-		cursorX += (float)get().characters[character]->xadvance / (float)get().textureWidth + xoffset;
-		iterator++;
-	}
-
-	createVAO();
+	loadTexture("res/fonts/" + fontName + ".png");
+	loadFontFile("res/fonts/" + fontName + ".fnt");
 }

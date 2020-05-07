@@ -11,6 +11,7 @@ private:
 	static void renderModels();
 	static void renderUi();
 	static void renderTerrain();
+	static void renderText();
 
 public:
 	static void render();

@@ -38,28 +38,31 @@ int main()
 	float value = 0.0f;
 	UserInterface::slider(value, -0.3f, 0.3f, 0.1f);
 
-	UserInterface::slider(config::maxVertexperTerrain, 1.0f, 1024.0f, 10.0f);
-	UserInterface::slider(config::terrainSize, 1.0f, 1000.0f, 10.0f);
+	/*UserInterface::slider(config::maxVertexperTerrain, 1.0f, 1024.0f, 10.0f);
+	UserInterface::slider(config::terrainSize, 1.0f, 1000.0f, 10.0f);*/
 
 	bool generate = false;
 	UserInterface::button(generate);
 
 	Terrain::generate();
 	
-	Text::loadFont("CandaraASCII");
-	Text::addText("O Ivan é lindo e gostoso!!", -0.5f, 0);
+	TextHandler::loadFont("CandaraASCII");
+	auto sliderText = TextHandler::add("", 0, 0, 0);
+	auto precisionText = TextHandler::add("", 0, -0.5f, 0);
+
+
+	/*TextHandler::add("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce id massa vitae nunc ultrices sodales. "
+		"Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ultricies varius dui, scelerisque posuere elit iaculis a. "
+		"Fusce sed semper nulla, quis finibus nunc. Vivamus suscipit eleifend tellus, non interdum nunc fermentum congue. Sed ornare viverra tellus eget volutpat. "
+		"In at neque vehicula, sollicitudin leo nec, dapibus quam. Donec dignissim euismod lorem vel varius. Donec vel enim purus. Nam sed pulvinar mi.", -0.8f, 0.8f, 1.0f);*/
+
 
 	UserInterface::panel(IVS_HALIGN_RIGHT);
-	UserInterface::slider(config::textColor.r, 0.0f, 1.0f, 0.1f);
-	UserInterface::slider(config::textColor.g, 0.0f, 1.0f, 0.1f);
-	UserInterface::slider(config::textColor.b, 0.0f, 1.0f, 0.1f);
-	UserInterface::slider(config::textWidth, 0.3f, 0.5f, 0.1f);
-	UserInterface::slider(config::textEdge, 0.3f, 0.01f, 0.1f);
 
-	std::string nome = "Ivan ";
-	std::string sobrenome = "Ivan ";
-
-	ivs::log(nome + sobrenome);
+	float sliderValue = 0;
+	float precision = 0;
+	UserInterface::slider(sliderValue, 0, 100, 1);
+	UserInterface::slider(precision, 1, 6, 1);
 
 	while (Display::isOpen()) {
 		Controller::processInputs();
@@ -72,6 +75,11 @@ int main()
 		}
 
 		model->rotate(value, value, value);
+
+		precision = (int)precision == 1.0f ? 0.0f : precision;
+
+		TextHandler::getText(precisionText).assign(std::to_string(precision).substr(0, std::to_string(precision).find('.')));
+		TextHandler::getText(sliderText).assign(std::to_string(sliderValue).substr(0, std::to_string(sliderValue).find('.') + precision));
 
 		Render::render();
 

@@ -7,11 +7,12 @@
 
 #include "Render.h"
 #include "Display.h"
-#include "Models.h"
 #include "Shaders.h"
+
 #include "Terrain.h"
-#include "Text.h"
+#include "Models.h"
 #include "UserInterface.h"
+#include "Text.h"
 
 Render& Render::get()
 {
@@ -117,6 +118,23 @@ void Render::renderTerrain()
 	glDrawElements(GL_TRIANGLES, Terrain::getIndicesCount(), GL_UNSIGNED_INT, 0);
 }
 
+void Render::renderText()
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, TextHandler::textureID);
+
+	Shaders::setUniform1i(glGetUniformLocation(Shaders::getShaders()[3], "u_Texture"), 0);
+	Shaders::setUniform3f(glGetUniformLocation(Shaders::getShaders()[3], "textColor"), config::textColor);
+	Shaders::setUniform1f(glGetUniformLocation(Shaders::getShaders()[3], "width"), config::textWidth);
+	Shaders::setUniform1f(glGetUniformLocation(Shaders::getShaders()[3], "edge"), config::textEdge);
+
+	for (auto text : TextHandler::texts) {
+		text.second->updateDynamicData();
+		glBindVertexArray(text.second->vao);
+		glDrawElements(GL_TRIANGLES, text.second->indices.size(), GL_UNSIGNED_INT, 0);
+	}
+}
+
 void Render::render()
 {
 	Shaders::activate(2);
@@ -129,5 +147,5 @@ void Render::render()
 	renderUi();
 
 	Shaders::activate(3);
-	Text::render();
+	renderText();
 }

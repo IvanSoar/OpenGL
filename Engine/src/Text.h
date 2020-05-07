@@ -4,35 +4,59 @@
 #include <map>
 #include <vector>
 
-class CharacterData {
-public:
+struct vertex {
+	float positions[2];
+	float textureCoords[2];
+};
+
+struct CharacterData {
 	int x, y, width, height, xoffset, yoffset, xadvance;
-	
-	CharacterData(int x, int y, int width, int height, int xoffset, int yoffset, int xadvance)
-		: x(x), y(y), width(width), height(height), xoffset(xoffset), yoffset(yoffset), xadvance(xadvance) {}
 };
 
 class Text {
-private:
+protected:
+	float x, y, lineWidth;
+	std::string textString;
+
 	unsigned int vao;
-	int x, y, width, height;
-	std::map<char, CharacterData*> characters;
-	std::vector<float> vertex;
-	std::vector<unsigned int> index;
+	unsigned int ebo;
+	unsigned int vbo;
 
-	unsigned int textureID;
-	unsigned char* textureBuffer;
-	int textureWidth, textureHeight, textureBPP;
+	std::vector<unsigned int> indices;
+	std::vector<float> vertices;
 
-	static Text& get();
-	Text() {}
-	Text(const Text&) = delete;
+	void updateIndex();
+	void updateVertex();
+	void createVAO();
+
+	void createDynamicVAO();
+	void updateDynamicData();
+
+	friend class TextHandler;
+	friend class Render;
 
 public:
-	static void loadFont(const std::string& fontName);
-	static void createVAO();
-	static void render();
+	Text(const std::string& string, float x, float y, float lineWidth) : textString(string), x(x), y(y), lineWidth(lineWidth), vao(0), vbo(0), ebo(0) {}
+
+
+};
+
+class TextHandler {
+protected:
+	inline static unsigned int textureID;
+	inline static unsigned char* textureBuffer;
+	inline static int textureWidth, textureHeight, textureBPP;
+
+	inline static std::map<unsigned char, CharacterData> characters;
+	inline static std::map<unsigned int, Text*> texts;
+
+	friend class Text;
+	friend class Render;
+
+public:
 	static void loadTexture(const std::string& filepath);
 	static void loadFontFile(const std::string& filepath);
-	static void addText(const std::string& text, float x, float y);
+	static void loadFont(const std::string& fontName);
+	static unsigned int add(const std::string& text, float x, float y, float lineWidth);
+	static std::string& getText(unsigned int textId);
 };
