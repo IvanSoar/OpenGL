@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 
+#include "../ivsEngine.h"
+
 struct vertex {
 	float positions[2];
 	float textureCoords[2];
@@ -17,6 +19,7 @@ class Text {
 protected:
 	float x, y, lineWidth;
 	std::string textString;
+	text_rendering_type renderType;
 
 	unsigned int vao;
 	unsigned int ebo;
@@ -36,7 +39,7 @@ protected:
 	friend class Render;
 
 public:
-	Text(const std::string& string, float x, float y, float lineWidth) : textString(string), x(x), y(y), lineWidth(lineWidth), vao(0), vbo(0), ebo(0) {}
+	Text(const std::string& string, text_rendering_type renderType, float x, float y, float lineWidth) : textString(string), renderType(renderType), x(x), y(y), lineWidth(lineWidth), vao(0), vbo(0), ebo(0) {}
 
 
 };
@@ -57,6 +60,6 @@ public:
 	static void loadTexture(const std::string& filepath);
 	static void loadFontFile(const std::string& filepath);
 	static void loadFont(const std::string& fontName);
-	static unsigned int add(const std::string& text, float x, float y, float lineWidth);
+	static unsigned int text(const std::string& text, text_rendering_type textType = IVS_STATIC_TEXT, float x = 0.0f, float y = 0.0f, float lineWidth = 0.0f);
 	static std::string& getText(unsigned int textId);
 };

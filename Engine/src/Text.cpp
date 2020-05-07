@@ -134,18 +134,6 @@ void Text::createDynamicVAO()
 }
 
 
-unsigned int TextHandler::add(const std::string& text, float x, float y, float lineWidth)
-{
-	Text* instance = new Text(text, x, y, lineWidth);
-	
-	instance->createDynamicVAO();
-	instance->updateDynamicData();
-	
-	unsigned int id = texts.size();
-	texts[id] = instance;
-	return id;
-}
-
 std::string& TextHandler::getText(unsigned int textId)
 {
 	return texts[textId]->textString;
@@ -200,4 +188,23 @@ void TextHandler::loadFont(const std::string& fontName)
 {
 	loadTexture("res/fonts/" + fontName + ".png");
 	loadFontFile("res/fonts/" + fontName + ".fnt");
+}
+
+unsigned int TextHandler::text(const std::string& text, text_rendering_type textType, float x, float y, float lineWidth)
+{
+	Text* instance = new Text(text, textType, x, y + texts.size() * 0.1f, lineWidth);
+
+	if (textType == IVS_DYNAMIC_TEXT) {
+		instance->createDynamicVAO();
+		instance->updateDynamicData();
+	}
+	else {
+		instance->updateIndex();
+		instance->updateVertex();
+		instance->createVAO();
+	}
+
+	unsigned int id = texts.size();
+	texts[id] = instance;
+	return id;
 }

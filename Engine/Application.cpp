@@ -47,8 +47,7 @@ int main()
 	Terrain::generate();
 	
 	TextHandler::loadFont("CandaraASCII");
-	auto sliderText = TextHandler::add("", 0, 0, 0);
-	auto precisionText = TextHandler::add("", 0, -0.5f, 0);
+	auto sliderText = TextHandler::text("ivan", IVS_DYNAMIC_TEXT);
 
 
 	/*TextHandler::add("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce id massa vitae nunc ultrices sodales. "
@@ -76,9 +75,8 @@ int main()
 
 		model->rotate(value, value, value);
 
-		precision = (int)precision == 1.0f ? 0.0f : precision;
 
-		TextHandler::getText(precisionText).assign(std::to_string(precision).substr(0, std::to_string(precision).find('.')));
+		precision = (int)precision == 1.0f ? 0.0f : precision;
 		TextHandler::getText(sliderText).assign(std::to_string(sliderValue).substr(0, std::to_string(sliderValue).find('.') + precision));
 
 		Render::render();

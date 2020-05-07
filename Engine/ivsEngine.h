@@ -27,6 +27,13 @@ enum class ui_v_align : unsigned char
 #define IVS_VALIGN_CENTER ui_v_align::CENTER
 #define IVS_VALIGN_BOTTOM ui_v_align::BOTTOM
 
+enum class text_rendering_type : unsigned char {
+	STATIC = 0, DYNAMIC
+};
+
+#define IVS_STATIC_TEXT text_rendering_type::STATIC
+#define IVS_DYNAMIC_TEXT text_rendering_type::DYNAMIC
+
 namespace ivs {
 	template<typename type>
 	void log(const type msg, int value = 2)

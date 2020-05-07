@@ -129,7 +129,9 @@ void Render::renderText()
 	Shaders::setUniform1f(glGetUniformLocation(Shaders::getShaders()[3], "edge"), config::textEdge);
 
 	for (auto text : TextHandler::texts) {
-		text.second->updateDynamicData();
+		if(text.second->renderType == IVS_DYNAMIC_TEXT)
+			text.second->updateDynamicData();
+
 		glBindVertexArray(text.second->vao);
 		glDrawElements(GL_TRIANGLES, text.second->indices.size(), GL_UNSIGNED_INT, 0);
 	}
