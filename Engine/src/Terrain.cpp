@@ -15,7 +15,7 @@ Terrain& Terrain::get()
 
 void Terrain::generate()
 {
-	srand(time(NULL));
+	srand(time(0));
 	int tam = config::maxVertexperTerrain;
 	get().verticesCount = tam * tam;
 	float* vertices = new float[get().verticesCount * 3];
@@ -23,9 +23,9 @@ void Terrain::generate()
 	int pointer = 0;
 	for (int x = 0; x < tam; x++) {
 		for (int y = 0; y < tam; y++) {
-			vertices[pointer * 3 + 0] = (float) y / (tam - 1) * config::terrainSize;
-			vertices[pointer * 3 + 1] = (float) (rand() % 2) - 0.5;
-			vertices[pointer * 3 + 2] = (float) x / (tam - 1) * config::terrainSize;
+			vertices[pointer * 3 + 0] = (float)y / (tam - 1) * config::terrainSize;
+			vertices[pointer * 3 + 1] = (float)(rand() % 2) - 0.5;
+			vertices[pointer * 3 + 2] = (float)x / (tam - 1) * config::terrainSize;
 			pointer++;
 		}
 	}
