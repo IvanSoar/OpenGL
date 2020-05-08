@@ -34,17 +34,17 @@ void Text::updateVertex()
 
 	bool flag = false;
 	for (auto character : textString) {
-		float charWidth = (float)TextHandler::characters[character].width / (float)TextHandler::textureWidth;
-		float charHeight = (float)TextHandler::characters[character].height / (float)TextHandler::textureHeight;
+		float charWidth = TextHandler::characters[character].width;
+		float charHeight = TextHandler::characters[character].height;
 
-		float x1 = (float)TextHandler::characters[character].x / (float)TextHandler::textureWidth;
+		float x1 = TextHandler::characters[character].x;
 		float x2 = x1 + charWidth;
 
-		float y1 = 1 - (float)TextHandler::characters[character].y / (float)TextHandler::textureHeight;
+		float y1 = 1 - TextHandler::characters[character].y;
 		float y2 = y1 - charHeight;
 
-		float xoffset = (float)TextHandler::characters[character].xoffset / (float)TextHandler::textureWidth;
-		float yoffset = (float)TextHandler::characters[character].yoffset / (float)TextHandler::textureHeight;
+		float xoffset = TextHandler::characters[character].xoffset;
+		float yoffset = TextHandler::characters[character].yoffset;
 
 		vertices.push_back(cursorX);
 		vertices.push_back(cursorY - yoffset);
@@ -66,10 +66,10 @@ void Text::updateVertex()
 		vertices.push_back(x2);
 		vertices.push_back(y1);
 
-		size += ((float)TextHandler::characters[character].xadvance / (float)TextHandler::textureWidth) + xoffset;
+		size += TextHandler::characters[character].xadvance + xoffset;
 		flag = size >= lineWidth ? true : flag;
 
-		cursorX += ((float)TextHandler::characters[character].xadvance / (float)TextHandler::textureWidth) + xoffset;
+		cursorX += TextHandler::characters[character].xadvance + xoffset;
 		if (flag && character == ' ') {
 			cursorX = x;
 			cursorY -= 0.1f;
@@ -165,7 +165,7 @@ void TextHandler::loadFontFile(const std::string& filepath)
 	std::ifstream file(filepath, std::ifstream::in);
 	std::string line;
 
-	int id, x, y, width, height, xoffset, yoffset, xadvance;
+	float id, x, y, width, height, xoffset, yoffset, xadvance;
 	while (!file.eof()) {
 		getline(file, line);
 		if (line.find("char id=") != std::string::npos) {
@@ -177,6 +177,14 @@ void TextHandler::loadFontFile(const std::string& filepath)
 			xoffset = stoi(line.substr(line.find("xoffset=") + 8, line.find(' ')));
 			yoffset = stoi(line.substr(line.find("yoffset=") + 8, line.find(' ')));
 			xadvance = stoi(line.substr(line.find("xadvance=") + 9, line.find(' ')));
+
+			x /= textureWidth;
+			y /= textureHeight;
+			width /= textureWidth;
+			height /= textureHeight;
+			xoffset /= textureWidth;
+			yoffset /= textureHeight;
+			xadvance /= textureWidth;
 
 			characters[id] = { x, y, width, height, xoffset, yoffset, xadvance };
 		}
@@ -192,15 +200,15 @@ void TextHandler::loadFont(const std::string& fontName)
 
 unsigned int TextHandler::text(const std::string& text, text_rendering_type textType, float x, float y, float lineWidth)
 {
-	Text* instance = new Text(text, textType, x, y + texts.size() * 0.1f, lineWidth);
+	Text* instance = new Text(text, textType, x, y, lineWidth);
 
 	if (textType == IVS_DYNAMIC_TEXT) {
 		instance->createDynamicVAO();
 		instance->updateDynamicData();
 	}
 	else {
-		instance->updateIndex();
 		instance->updateVertex();
+		instance->updateIndex();
 		instance->createVAO();
 	}
 

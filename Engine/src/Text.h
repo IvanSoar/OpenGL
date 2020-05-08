@@ -12,7 +12,7 @@ struct vertex {
 };
 
 struct CharacterData {
-	int x, y, width, height, xoffset, yoffset, xadvance;
+	float x, y, width, height, xoffset, yoffset, xadvance;
 };
 
 class Text {
