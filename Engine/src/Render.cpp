@@ -57,6 +57,7 @@ void Render::renderUi()
 {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 
 	glBindVertexArray(UserInterface::getVAO());
 
@@ -122,6 +123,8 @@ void Render::renderText()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextHandler::textureID);
+
+	glDisable(GL_DEPTH_TEST);
 
 	Shaders::setUniform1i(glGetUniformLocation(Shaders::getShaders()[3], "u_Texture"), 0);
 	Shaders::setUniform3f(glGetUniformLocation(Shaders::getShaders()[3], "textColor"), config::textColor);
