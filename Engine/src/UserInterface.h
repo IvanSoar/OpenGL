@@ -57,11 +57,12 @@ private:
 	uiElement* body;
 	float* value;
 	float min, max;
-	float step;
+	float precision;
 	uiContainer& container;
+	unsigned int text;
 
 protected:
-	Slider(int x, int y, int width, float& value, float min, float max, float step, uiContainer& container);
+	Slider(int x, int y, int width, float& value, float min, float max, float precision, uiContainer& container);
 	
 	void update() override;
 	
@@ -78,7 +79,7 @@ private:
 	uiContainer& container;
 
 protected:
-	Button(int x, int y, int width, int height, bool& value, uiContainer& container);
+	Button(int x, int y, int width, int height, bool& value, const std::string& label, uiContainer& container);
 
 	void update() override;
 
@@ -117,8 +118,8 @@ protected:
 
 public:
 	static void init();
-	static void slider(float& value, float min, float max, float step);
-	static void button(bool& value);
+	static void slider(float& value, float min, float max, float precision);
+	static void button(bool& value, const std::string& label);
 	static void panel(ui_h_align halign, ui_v_align valign = IVS_VALIGN_CENTER, float widthFactor = config::uiWidthFactor, float heightFactor = config::uiHeightFactor);
 
 	static void addElement(uiElement* element);

@@ -6,6 +6,7 @@
 #include "UserInterface.h"
 #include "Display.h"
 #include "Controller.h"
+#include "Text.h"
 #include "../ivsEngine.h"
 
 UserInterface& UserInterface::get()
@@ -60,19 +61,18 @@ std::vector<uiContainer*> UserInterface::getContainers()
 	return get().containerList;
 }
 
-
-void UserInterface::slider(float& value, float min, float max, float step)
+void UserInterface::slider(float& value, float min, float max, float precision)
 {
-	
+
 	auto container = get().containerList.back();
 	int x = container->x - container->width / 2;
 	int width = container->width - 2 * config::padding;
 	int y = container->y - container->height / 2 + config::padding + container->componenteCount * 30;
 
 	container->componenteCount++;
-	addComponent(new Slider(x, y, width, value, min, max, step, *container));
+	addComponent(new Slider(x, y, width, value, min, max, precision, *container));
 }
-void UserInterface::button(bool& value)
+void UserInterface::button(bool& value, const std::string& label)
 {
 	auto container = get().containerList.back();
 	int width = container->width / 2;
@@ -81,13 +81,12 @@ void UserInterface::button(bool& value)
 	int y = container->y + container->height / 2 - height - config::padding;
 
 	container->componenteCount++;
-	addComponent(new Button(x, y, width, height, value, *container));
+	addComponent(new Button(x, y, width, height, value, label, *container));
 }
 void UserInterface::panel(ui_h_align halign, ui_v_align valign, float widthFactor, float heightFactor)
 {
 	addContainer(new Panel(halign, valign, widthFactor, heightFactor, true));
 }
-
 
 void uiElement::update(int x, int y, int width, int height, glm::vec4 color)
 {
@@ -98,13 +97,18 @@ void uiElement::update(int x, int y, int width, int height, glm::vec4 color)
 	this->color = color;
 }
 
-
-Slider::Slider(int x, int y, int width, float& value, float min, float max, float step, uiContainer& container)
-	: x(x), y(y), width(width), value(&value), state(false), min(min), max(max), step(step), container(container)
+Slider::Slider(int x, int y, int width, float& value, float min, float max, float precision, uiContainer& container)
+	: x(x), y(y), width(width), value(&value), state(false), min(min), max(max), precision(precision), container(container)
 {
 	body = new uiElement(x + width / 2, y + width / 40, width, width / 20, config::uiColor, -config::layer1);
 
 	head = new uiElement(body->x, body->y, body->height, body->height, config::uiDetailColor, -config::layer2);
+
+	float textX = ivs::map(0.0f, (float)config::screenWidth, -1.0f, 1.0f, (float)body->x);
+	float textY = -ivs::map(0.0f, (float)config::screenHeight, -1.0f, 1.0f, (float)body->y);
+	float textWidth = ivs::map(0.0f, (float)config::screenWidth, -1.0f, 1.0f, (float)body->width);
+
+	text = TextHandler::text(std::to_string(value).substr(0, std::to_string(value).find('.') + precision), IVS_DYNAMIC_TEXT, textX, textY, textWidth);
 
 	UserInterface::addElement(head);
 	UserInterface::addElement(body);
@@ -144,12 +148,22 @@ void Slider::update()
 	head->x = head->x < body->x - body->width / 2 + body->height / 2 ? body->x - body->width / 2 + body->height / 2 : head->x;
 
 	*value = ivs::map((float)body->x - body->width / 2 + head->width / 2, (float)body->x + body->width / 2 - head->width / 2, (float)min, (float)max, (float)head->x);
+	
+	precision = (int)precision == 1 ? 0.0f : precision;
+
+	TextHandler::getText(text).assign(std::to_string(*value).substr(0, std::to_string(*value).find('.') + precision));
 }
 
-Button::Button(int x, int y, int width, int height, bool& value, uiContainer& container)
+Button::Button(int x, int y, int width, int height, bool& value, const std::string& label, uiContainer& container)
 	: x(x), y(y), width(width), height(height), value(&value), container(container)
 {
 	body = new uiElement(x + width / 2, y + height / 2, width, height, config::uiColor, -config::layer1);
+
+	float textX = ivs::map(0.0f, (float)config::screenWidth, -1.0f, 1.0f, (float)body->x) + ivs::map(0.0f, (float)config::screenWidth, -1.0f, 1.0f, (float)body->width) / 3;
+	float textY = -ivs::map(0.0f, (float)config::screenHeight, -1.0f, 1.0f, (float)body->y) - ivs::map(0.0f, (float)config::screenHeight, -1.0f, 1.0f, (float)body->height) / 4;
+	float textWidth = ivs::map(0.0f, (float)config::screenWidth, -1.0f, 1.0f, (float)body->width);
+
+	TextHandler::text(label, IVS_STATIC_TEXT, textX, textY, textWidth);
 
 	UserInterface::addElement(body);
 }
